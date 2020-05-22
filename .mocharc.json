@@ -1,0 +1,6 @@
+{
+	"diff": true,
+	"extension": ["ts"],
+	"require": ["ts-node/register"],
+	"watch-files": ["src/**/*.spec.ts"]
+  }
