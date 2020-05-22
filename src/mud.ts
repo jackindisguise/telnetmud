@@ -1,8 +1,6 @@
 import { logger } from "./logger";
 import * as io from "./io";
-import * as fs from "fs";
-
-const greeting = fs.readFileSync("./data/greeting.txt", "utf8");
+import * as database from "./database";
 
 export class Player{
 	client: io.Client;
@@ -61,7 +59,7 @@ export class MUD{
 
 	static nanny(player: Player){
 		MUD.addPlayer(player);
-		player.sendLine(greeting);
+		player.sendLine(database.greeting);
 		player.ask("What's your name?", function(name: string){
 			player.sendLine(`You chose the name {R${name}{x.`);
 			logger.info(`New player: ${name}`);

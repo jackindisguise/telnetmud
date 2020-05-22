@@ -7,13 +7,13 @@ export let version: string = "1.0.0";
 
 export default function(callback: Function){
 	fs.exists(file, function(exists: boolean){
-		if(!exists) return;
+		if(!exists) return callback();
 		fs.readFile(file, "utf8", function(err, data){
 			if(err) return;
 			let yaml = YAML.parse(data);
 			if(yaml.name) name = yaml.name;
 			if(yaml.version) version = yaml.version;
-			callback();
+			return callback();
 		});
 	})
 };
