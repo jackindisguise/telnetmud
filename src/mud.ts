@@ -59,7 +59,7 @@ export class MUD{
 
 	static nanny(player: Player){
 		MUD.addPlayer(player);
-		player.sendLine(database.greeting);
+		player.sendLine(database.text.greeting);
 		player.ask("What's your name?", function(name: string){
 			player.sendLine(`You chose the name {R${name}{x.`);
 			logger.info(`New player: ${name}`);

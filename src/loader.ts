@@ -20,7 +20,6 @@ function loadServerFile(done: Function){
 };
 
 const loaders: Function[] = [loadGameFile, loadServerFile];
-
 export function load(done: Function){
 	function next(){
 		let loader: Function|undefined = loaders.shift();
