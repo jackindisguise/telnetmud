@@ -15,26 +15,6 @@ export enum Command {
 	xEOF					= 236
 };
 
-export enum Color {
-	BLINK					= "\u001b[5m",
-	CLEAR					= "\u001b[0m",
-	MAROON					= "\u001b[0;31m",
-	DARK_GREEN				= "\u001b[0;32m",
-	OLIVE					= "\u001b[0;33m",
-	NAVY					= "\u001b[0;34m",
-	PURPLE					= "\u001b[0;35m",
-	TEAL					= "\u001b[0;36m",
-	SILVER					= "\u001b[0;37m",
-	GREY					= "\u001b[1;30m",
-	CRIMSON					= "\u001b[1;31m",
-	LIME					= "\u001b[1;32m",
-	YELLOW					= "\u001b[1;33m",
-	BLUE					= "\u001b[1;34m",
-	PINK					= "\u001b[1;35m",
-	CYAN					= "\u001b[1;36m",
-	WHITE					= "\u001b[1;37m"
-};
-
 export enum Environment {
 	IS						= 0,
 	SEND					= 1

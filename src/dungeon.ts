@@ -1,4 +1,5 @@
 import { Direction } from "./direction";
+import * as color from "./color";
 
 export type Dimensions = {
 	width: number,
@@ -146,6 +147,8 @@ type RoomOptions = {
 }
 
 export class Room implements Occupiable{
+	name: string = "a room";
+	description: string = "It's a room.";
 	private _dungeon: Dungeon;
 	private _coordinates: CartesianCoordinates;
 	private _contents: Occupier[] = [];
@@ -215,11 +218,26 @@ type DObjectOptions = {
 };
 
 export class DObject implements Occupiable, Occupier{
+	keywords: string = "dobject";
+	display: string = "DObject";
 	private _location: Occupiable|null = null;
 	private _contents: Occupier[] = [];
 	constructor(options?:DObjectOptions){
 		if(!options) return;
 		if(options.location) this.location = options.location;
+	}
+
+	toString(): string{
+		return this.display;
+	}
+
+	get name(): string{
+		return this.display;
+	}
+
+	set name(name: string){
+		this.keywords = color.strip(name.trim().toLowerCase());
+		this.display = name;
 	}
 
 	get location(): Occupiable|null{

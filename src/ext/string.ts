@@ -1,3 +1,5 @@
+import * as color from "../color";
+
 // side parameter for pad function
 export enum PadSide { LEFT, RIGHT, CENTER };
 
@@ -6,8 +8,9 @@ export function pad(str: string, side: PadSide.LEFT, size:number, padder?: strin
 export function pad(str: string, side: PadSide.RIGHT, size:number, padder?: string): string;
 export function pad(str: string, side: PadSide.CENTER, size:number, padder?: string): string;
 export function pad(str: string, side: PadSide, size: number, padder?: string): string {
+	let uncolored = color.strip(str);
 	if(!padder) padder = " "; // default to a space
-	let padding = size-str.length; // total space required
+	let padding = size-uncolored.length; // total space required
 	let padderCount = padding/padder.length; // total number of padders needed
 	let left: number = 0;
 	let right: number = 0;

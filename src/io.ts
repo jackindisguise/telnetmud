@@ -1,7 +1,8 @@
 import { EventEmitter } from "events";
 import * as net from "net";
 import * as color from "./color";
-import * as telnet from "./telnet";
+import * as stringext from "./ext/string";
+import { _ } from "../i18n";
 
 export interface Server{
 	clients: Client[];
@@ -33,7 +34,7 @@ export class TelnetServer implements Server{
 	clients: TelnetClient[] = [];
 	private emitter: EventEmitter = new EventEmitter();
 	private netserver: net.Server = new net.Server();
-	open(port: number, callback: ()=>void): void{
+	open(port: number, callback: ()=>void){
 		let netserver = this.netserver;
 		let server = this;
 		netserver.listen(port, function(){
@@ -66,9 +67,16 @@ export class TelnetServer implements Server{
 		this.clients.splice(pos, 1);
 	}
 
-	close(callback: ()=>void): void{
+	close(callback: ()=>void){
 		if(this.netserver.listening === false) return;
-		callback();
+		for(let client of this.clients){ // kill all clients
+			client.sendLine("{r*{R*".repeat(40)+"{x");
+			client.sendLine(`{r*{R* ${stringext.center(_("We're shutting down, so beat it."), 74)} {r*{R*{x`);
+			client.sendLine("{r*{R*".repeat(40)+"{x");
+			client.close();
+		}
+
+		this.netserver.close(callback); // close server
 	}
 
 	once(event: "connection", listener: (client: TelnetClient) => void): EventEmitter;
@@ -124,7 +132,7 @@ export class TelnetClient implements Client{
 	}
 
 	close(){
-		this.sendLine("{PLater bitch.{x");
+		this.sendLine(_("You turn into a line noise."));
 		this.socket.destroy();
 	}
 
@@ -138,34 +146,8 @@ export class TelnetClient implements Client{
 	}
 
 	colorize(data: string, blind?: boolean): string{
-		let regex: RegExp = new RegExp(`${color.ColorEscapeCharacter}(.)`, "g");
-		return data.replace(regex, function(match, char, pos, string){
-			if(blind){
-				if(char === color.ColorEscapeCharacter) return color.ColorEscapeCharacter;
-				else return "";
-			}
-
-			switch(char){
-				case color.ColorEscapeCharacter: return color.ColorEscapeCharacter;
-				case color.ColorCharacter.CLEAR: return telnet.Color.CLEAR;
-				case color.ColorCharacter.MAROON: return telnet.Color.MAROON;
-				case color.ColorCharacter.CRIMSON: return telnet.Color.CRIMSON;
-				case color.ColorCharacter.DARK_GREEN: return telnet.Color.DARK_GREEN;
-				case color.ColorCharacter.LIME: return telnet.Color.LIME;
-				case color.ColorCharacter.NAVY: return telnet.Color.NAVY;
-				case color.ColorCharacter.BLUE: return telnet.Color.BLUE;
-				case color.ColorCharacter.OLIVE: return telnet.Color.OLIVE;
-				case color.ColorCharacter.YELLOW: return telnet.Color.YELLOW;
-				case color.ColorCharacter.PURPLE: return telnet.Color.PURPLE;
-				case color.ColorCharacter.PINK: return telnet.Color.PINK;
-				case color.ColorCharacter.TEAL: return telnet.Color.TEAL;
-				case color.ColorCharacter.CYAN: return telnet.Color.CYAN;
-				case color.ColorCharacter.SILVER: return telnet.Color.SILVER;
-				case color.ColorCharacter.WHITE: return telnet.Color.WHITE;
-				case color.ColorCharacter.GREY: return telnet.Color.GREY;
-				default: return "";
-			}
-		});
+		if(blind) return color.strip(data);
+		return color.color(data, color.ColorReplace.Telnet);
 	}
 
 	once(event: "command", listener: (data: string) => void): EventEmitter;
