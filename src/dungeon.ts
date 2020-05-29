@@ -12,6 +12,11 @@ export type CartesianCoordinates = {
 	z:number
 }
 
+export interface Referencable{
+	keywords: string;
+	dispay: string;
+}
+
 export interface Occupier{
 	location: Occupiable|null;
 }

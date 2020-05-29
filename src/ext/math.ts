@@ -3,7 +3,7 @@ export function lerp(min:number, max:number, mod:number): number{
 }
 
 export function rangeInt(min:number, max:number): number{
-	return Math.ceil(lerp(min, max, Math.random()));
+	return Math.floor(lerp(min, max+1, Math.random()));
 }
 
 export function probability(p:number): boolean{
