@@ -2,7 +2,7 @@ import "mocha";
 import { expect } from "chai";
 import * as stringx from "./string";
 
-describe("stringx", function(){
+describe("ext/string", function(){
 	it("box", function(done){
 		// generic box
 		let options: stringx.BoxOptions = {

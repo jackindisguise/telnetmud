@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register --file test.spec.ts src/**/*.spec.ts",
+    "test": "mocha -r ts-node/register --file setup.spec.ts src/**/*.spec.ts",
     "make": "tsc"
   },
   "author": "",

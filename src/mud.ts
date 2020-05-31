@@ -15,7 +15,7 @@ export enum MessageCategory {
 export class Player{
 	client: io.Client;
 	mob: dungeon.Mob|undefined;
-	msgCategory: MessageCategory = MessageCategory.MSG_DEFAULT;
+	msgCategory: MessageCategory|undefined = MessageCategory.MSG_DEFAULT;
 	inputCallback: ((...args:string[]) => void) | undefined;
 	constructor(client: io.Client){
 		let player: Player = this;
@@ -31,6 +31,7 @@ export class Player{
 	}
 
 	command(line: string){
+		this.msgCategory = undefined;
 		if(this.inputCallback) {
 			let callback: (...args:string[]) => void = this.inputCallback;
 			this.inputCallback = undefined;
@@ -78,16 +79,15 @@ export class Player{
 		this.client.sendLine(data, colorize);
 	}
 
-	sendMessage(data: string, msgCategory: MessageCategory){
-		if(this.msgCategory !== MessageCategory.MSG_PROMPT) // don't send if the last message was a prompt
-			if(this.msgCategory !== msgCategory) this.sendLine("!!"); // message is different category from last
-		this.sendLine(data); // send message
+	sendMessage(data: string, msgCategory: MessageCategory, linebreak?:boolean){
+		if(this.msgCategory !== undefined && this.msgCategory !== msgCategory) this.sendLine("!!");
+		if(linebreak === undefined || linebreak) this.sendLine(data);
+		else this.send(data);
 		this.msgCategory = msgCategory; // assign new category
 	}
 
 	sendPrompt(){
-		this.send("\r\n{R>{x ");
-		this.msgCategory = MessageCategory.MSG_PROMPT;
+		this.sendMessage("{R>{x ", MessageCategory.MSG_PROMPT, false);
 	}
 }
 
@@ -100,6 +100,15 @@ export class MUD{
 			// process new client
 			let player = new Player(client);
 			MUD.addPlayer(player);
+
+			// listen for disconnection
+			client.once("disconnect", function(reason: string){
+				MUD.removePlayer(player);
+				if(!player.mob) return;
+				for(let oplayer of MUD.players){
+					oplayer.sendMessage(_("%s has turned into a line noise.", player.mob.name), MessageCategory.MSG_INFO);
+				}
+			});
 
 			// send greeting
 			let greeting: HelpFile|undefined = database.getHelpFileByKeyword(_("greeting")); 

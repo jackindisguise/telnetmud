@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import * as net from "net";
 import * as color from "./color";
-import * as stringext from "./ext/string";
+import * as stringx from "./ext/string";
 import { _ } from "../i18n";
 
 export interface Server{
@@ -70,9 +70,11 @@ export class TelnetServer implements Server{
 	close(callback: ()=>void){
 		if(this.netserver.listening === false) return;
 		for(let client of this.clients){ // kill all clients
-			client.sendLine("{r*{R*".repeat(40)+"{x");
-			client.sendLine(`{r*{R* ${stringext.center(_("We're shutting down, so beat it."), 74)} {r*{R*{x`);
-			client.sendLine("{r*{R*".repeat(40)+"{x");
+			client.sendLine("\r\n"+stringx.box({
+				content:[{text:_("We're shutting down, so beat it."),orientation:stringx.PadSide.CENTER}],
+				style:stringx.BoxStyle.STARRY,
+				size:80
+			}));
 			client.close();
 		}
 
