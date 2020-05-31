@@ -47,6 +47,7 @@ export namespace ColorReplace {
 	export function Telnet(substr: string, char: string): string{
 		switch(char){
 			case ColorEscapeCharacter: return ColorEscapeCharacter;
+			case ColorCharacter.BLINK: return ColorGroup.Telnet.BLINK;
 			case ColorCharacter.CLEAR: return ColorGroup.Telnet.CLEAR;
 			case ColorCharacter.MAROON: return ColorGroup.Telnet.MAROON;
 			case ColorCharacter.CRIMSON: return ColorGroup.Telnet.CRIMSON;
@@ -69,7 +70,8 @@ export namespace ColorReplace {
 }
 
 export function strip(str: string){
-	return str.replace(ColorEscapeRegExp, function(sub){
+	return str.replace(ColorEscapeRegExp, function(sub, char){
+		if(char === ColorEscapeCharacter) return char;
 		return "";
 	});
 }

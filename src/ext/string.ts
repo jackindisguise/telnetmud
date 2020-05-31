@@ -157,7 +157,7 @@ export function clamp(str: string, size: number): string{
 	for(let word of processed){
 		if(!clength && word.length == size) {
 			lines.push(word);
-		} else if(clength + word.length + 1 > size) { // if the following word goes over the limit, move it to next line
+		} else if(clength && clength + word.length + 1 > size) { // if the following word goes over the limit, move it to next line
 			lines.push(line.join(" "));
 			line = [word];
 			clength = word.length;

@@ -5,6 +5,7 @@
 	],
 	"exclude": [
 	  "**/*.spec.ts",
+	  "src/util/logger.ts",
 	  "index.ts"
 	]
   }

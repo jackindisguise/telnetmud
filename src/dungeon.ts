@@ -13,11 +13,6 @@ export type CartesianCoordinates = {
 	z:number
 }
 
-export interface Referencable{
-	keywords: string;
-	dispay: string;
-}
-
 export interface Occupier{
 	location: Occupiable|null;
 }
@@ -94,12 +89,11 @@ export class Dungeon{
 		this.contents.splice(i, 1);
 	}
 
-	contains(occupier:Occupier): boolean{
+	contains(occupier:Occupier|Occupiable): boolean{
 		return (this.contents.indexOf(occupier) != -1);
 	}
 
-	buildGrid(fill:boolean): void{
-		if(this.grid) throw new Error("Grid already built.");
+	private buildGrid(fill:boolean): void{
 		this.grid = new Array(this.proportions.layers);
 		for(let z=0;z<this.proportions.layers;z++){
 			this.grid[z] = new Array(this.proportions.height);
@@ -131,13 +125,14 @@ export class Dungeon{
 	}
 
 	getStep(coordinates:CartesianCoordinates, direction:Direction): Room{
-		if(direction&Direction.NORTH) coordinates.y--;
-		else if(direction&Direction.SOUTH) coordinates.y++;
-		if(direction&Direction.EAST) coordinates.x++;
-		else if(direction&Direction.WEST) coordinates.x--;
-		if(direction&Direction.UP) coordinates.z++;
-		else if(direction&Direction.DOWN) coordinates.z--;
-		return this.getRoom(coordinates);
+		let mCoordinates: CartesianCoordinates = {x:coordinates.x, y:coordinates.y, z:coordinates.z};
+		if(direction&Direction.NORTH) mCoordinates.y--;
+		else if(direction&Direction.SOUTH) mCoordinates.y++;
+		if(direction&Direction.EAST) mCoordinates.x++;
+		else if(direction&Direction.WEST) mCoordinates.x--;
+		if(direction&Direction.UP) mCoordinates.z++;
+		else if(direction&Direction.DOWN) mCoordinates.z--;
+		return this.getRoom(mCoordinates);
 	}
 }
 

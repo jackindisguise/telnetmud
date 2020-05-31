@@ -1,0 +1,28 @@
+// mocha and chai
+import "mocha";
+import { expect } from "chai";
+
+// local includes
+import * as color from "./color";
+
+describe("color", function(){
+	it("Color stripping.", function(done){
+		expect(color.strip("{rt{Rh{gi{Gs {bi{Bs {ya {Yt{pe{Ps{ct{C!{x")).is.equal("this is a test!");
+		expect(color.strip("{{brackets}")).is.equal("{brackets}");
+		expect(color.strip("the end{")).is.equal("the end");
+		done();
+	});
+
+	it("Uniform behavior.", function(done){
+		expect(color.color("{{}", color.ColorReplace.Telnet)).is.equal("{}");
+		expect(color.color("{}", color.ColorReplace.Telnet)).is.equal("");
+		done();
+	});
+
+	it("Telnet color.", function(done){
+		let characters = Object.values(color.ColorCharacter);
+		let codes = Object.values(color.ColorGroup.Telnet);
+		for(let i=0;i<characters.length;i++) expect(color.color(`{${characters[i]}this is a test{x`, color.ColorReplace.Telnet)).is.equal(`${codes[i]}this is a test${color.ColorGroup.Telnet.CLEAR}`);
+		done();
+	});
+});
