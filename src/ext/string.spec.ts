@@ -47,6 +47,10 @@ describe("ext/string", function(){
 		}
 
 		expect(stringx.box(options)).is.equal("******************************\r\n*       Would you like       *\r\n*      to suck my dick?      *\r\n******************************\r\n*             Yes            *\r\n******************************");
+
+		// computerie style
+		options.style = stringx.BoxStyle.COMPUTERIE;
+		expect(stringx.box(options)).is.equal("[\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\']\r\n[       Would you like       ]\r\n[      to suck my dick?      ]\r\n[||||||||||||||||||||||||||||]\r\n[             Yes            ]\r\n[............................]");
 		done();
 	});
 
@@ -54,6 +58,7 @@ describe("ext/string", function(){
 		let paragraph = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam in mi convallis est mollis pharetra. Vestibulum et ante varius, imperdiet massa et, feugiat dolor. Integer elementum nunc vitae scelerisque aliquet. Maecenas varius ornare lorem. Pellentesque ut viverra felis. Phasellus condimentum dictum elementum. Nam elit tortor, varius molestie nibh vel, suscipit maximus ex. Nullam egestas scelerisque placerat.";
 		expect(stringx.clamp(paragraph, 80)).is.equal("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam in mi convallis\r\nest mollis pharetra. Vestibulum et ante varius, imperdiet massa et, feugiat\r\ndolor. Integer elementum nunc vitae scelerisque aliquet. Maecenas varius ornare\r\nlorem. Pellentesque ut viverra felis. Phasellus condimentum dictum elementum.\r\nNam elit tortor, varius molestie nibh vel, suscipit maximus ex. Nullam egestas\r\nscelerisque placerat.");
 		expect(stringx.clamp(paragraph, 40)).is.equal("Lorem ipsum dolor sit amet, consectetur\r\nadipiscing elit. Etiam in mi convallis\r\nest mollis pharetra. Vestibulum et ante\r\nvarius, imperdiet massa et, feugiat\r\ndolor. Integer elementum nunc vitae\r\nscelerisque aliquet. Maecenas varius\r\nornare lorem. Pellentesque ut viverra\r\nfelis. Phasellus condimentum dictum\r\nelementum. Nam elit tortor, varius\r\nmolestie nibh vel, suscipit maximus ex.\r\nNullam egestas scelerisque placerat.");
+		expect(stringx.clamp("paragraph", 2)).is.equal("pa\r\nra\r\ngr\r\nap\r\nh");
 		done();
 	});
 
@@ -63,6 +68,7 @@ describe("ext/string", function(){
 		expect(stringx.center(text, 20)).is.equal("   This is a test.  ");
 		expect(stringx.pad(text, stringx.PadSide.LEFT,   20)).is.equal("     This is a test.");
 		expect(stringx.pad(text, stringx.PadSide.RIGHT,  20)).is.equal("This is a test.     ");
+		expect(stringx.pad(text, stringx.PadSide.CENTER, 2)).is.equal(text);
 		done();
 	});
 

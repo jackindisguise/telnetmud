@@ -12,24 +12,19 @@ export function probability(p:number): boolean{
 	return Math.random() < p;
 };
 
-export function roll(die:string): number;
 export function roll(die:number, sides:number): number;
 export function roll(die:number, sides:number, mod:number): number;
-export function roll(die:number|string, sides?:number, mod?:number): number{
-	if(typeof die === "string") { // string rolls
-		let result = die.match(/(\d+)d(\d+)(?:([-+])(\d+))?/);
-		if(!result) return 0;
-		die = Number(result[1]);
-		sides = Number(result[2]);
-		mod = Number(result[4]);
-		if(result[3]==="-") mod = 0-mod;
-		return roll(die,sides,mod);
-	}
+export function roll(die:number, sides:number, mod?:number): number{
+	if(mod) return rangeInt(die,sides*die)+mod;
+	return rangeInt(die,sides*die);
+}
 
-	if(sides) { // regular number rolls
-		if(mod) return rangeInt(die,sides*die)+mod;
-		else return rangeInt(die,sides*die);
-	}
-
-	return 0; // should never happen
+export function rollString(str:string): number{
+	let result = str.match(/(\d+)d(\d+)(?:([-+])(\d+))?/);
+	if(!result) return 0;
+	let die: number = Number(result[1]);
+	let sides: number = Number(result[2]);
+	let mod: number = Number(result[4]);
+	if(result[3]==="-") mod = 0-mod;
+	return roll(die, sides, mod);
 }

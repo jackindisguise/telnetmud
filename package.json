@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register --file setup.spec.ts src/**/*.spec.ts",
+	"test": "mocha -r ts-node/register --file setup.spec.ts src/**/*.spec.ts",
+	"coverage": "nyc --reporter=html --reporter=text npm run test",
     "make": "tsc"
   },
   "author": "",
@@ -23,6 +24,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "i18n": "^0.10.0",
+    "nyc": "^15.0.1",
     "pug": "^2.0.4",
     "socket.io": "^2.3.0",
     "ts-node": "^8.10.1",

@@ -26,6 +26,16 @@ describe("ext/math", function(){
 		let prob: number = 0.05;
 		for(let i=0;i<trials;i++) if(mathx.probability(prob)) success++;
 		expect(success/trials).is.within(prob*0.9, prob*1.1);
+
+		success = 0;
+		prob = 0;
+		for(let i=0;i<trials;i++) if(mathx.probability(prob)) success++;
+		expect(success).is.equal(0);
+
+		success = 0;
+		prob = 1;
+		for(let i=0;i<trials;i++) if(mathx.probability(prob)) success++;
+		expect(success).is.equal(trials);
 		done();
 	});
 
@@ -37,10 +47,12 @@ describe("ext/math", function(){
 			expect(mathx.roll(5,50)).is.within(5,250);
 			expect(mathx.roll(5,50,10)).is.within(15,260);
 			expect(mathx.roll(2,10,25)).is.within(27,45);
-			expect(mathx.roll("2d6+5")).is.within(7,17);
-			expect(mathx.roll("2d6-10")).is.within(-8,2);
+			expect(mathx.rollString("2d6+5")).is.within(7,17);
+			expect(mathx.rollString("2d6+pie")).is.within(2,12);
+			expect(mathx.rollString("2d6-10")).is.within(-8,2);
 		}
 
+		expect(mathx.rollString("invalid")).is.equal(0);
 		done();
 	});
 });
