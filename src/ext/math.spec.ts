@@ -21,7 +21,7 @@ describe("ext/math", function(){
 	});
 
 	it("probability", function(done){
-		let trials: number = 500000;
+		let trials: number = 5000;
 		let success: number = 0;
 		let prob: number = 0.05;
 		for(let i=0;i<trials;i++) if(mathx.probability(prob)) success++;
