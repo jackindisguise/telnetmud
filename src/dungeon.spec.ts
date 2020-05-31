@@ -5,7 +5,7 @@ import { Direction } from "./direction";
 
 let d: dungeon.Dungeon;
 let m: dungeon.Mob;
-describe("Dungeon interaction.", function(){
+describe("dDungeon", function(){
 	it("Construct an empty 10x10x1 dungeon.", function(done){
 		d = new dungeon.Dungeon({proportions:{width:10,height:10,layers:1}, fill:false});
 		expect(d.contents.length).equals(0);
