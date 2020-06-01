@@ -94,7 +94,7 @@ export class Player{
 export class MUD{
 	static server: io.Server = new io.TelnetServer();
 	static players: Player[] = [];
-	static start(){
+	static start(port: number){
 		if(MUD.server.isOpen()) throw new Error(_("MUD & server already started."));
 		MUD.server.on("connection", function(client: io.Client){
 			// process new client
@@ -118,7 +118,7 @@ export class MUD{
 			MUD.nanny(player);
 		});
 
-		MUD.server.open(23, function(){
+		MUD.server.open(port, function(){
 			logger.info(_("started on port %s", "23"));
 		});
 	}

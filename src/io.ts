@@ -6,9 +6,9 @@ import { _ } from "../i18n";
 
 export interface Server{
 	clients: Client[];
-	open(port: number, callback: ()=>void): void;
+	open(port: number, callback?: ()=>void): void;
 	isOpen(): boolean;
-	close(callback: ()=>void): void;
+	close(callback?: ()=>void): void;
 	on(event: "connection", listener: (client: Client) => void): EventEmitter;
 	on(event: "disconnection", listener: (client: Client) => void): EventEmitter;
 	once(event: "connection", listener: (client: Client) => void): EventEmitter;
@@ -34,7 +34,7 @@ export class TelnetServer implements Server{
 	clients: TelnetClient[] = [];
 	private emitter: EventEmitter = new EventEmitter();
 	private netserver: net.Server = new net.Server();
-	open(port: number, callback: ()=>void){
+	open(port: number, callback?: ()=>void){
 		let netserver = this.netserver;
 		let server = this;
 		netserver.listen(port, function(){
@@ -48,8 +48,22 @@ export class TelnetServer implements Server{
 				});
 			});
 
-			callback();
+			if(callback) callback();
 		});
+	}
+
+	close(callback?: ()=>void){
+		if(this.netserver.listening === false) return;
+		for(let client of this.clients){ // kill all clients
+			client.sendLine("\r\n"+stringx.box({
+				content:[{text:_("We're shutting down, so beat it."),orientation:stringx.PadSide.CENTER}],
+				style:stringx.BoxStyle.STARRY,
+				size:80
+			}));
+			client.close();
+		}
+
+		this.netserver.close(callback); // close server
 	}
 
 	isOpen(): boolean{
@@ -65,20 +79,6 @@ export class TelnetServer implements Server{
 		let pos = this.clients.indexOf(client);
 		if(pos === -1) return;
 		this.clients.splice(pos, 1);
-	}
-
-	close(callback: ()=>void){
-		if(this.netserver.listening === false) return;
-		for(let client of this.clients){ // kill all clients
-			client.sendLine("\r\n"+stringx.box({
-				content:[{text:_("We're shutting down, so beat it."),orientation:stringx.PadSide.CENTER}],
-				style:stringx.BoxStyle.STARRY,
-				size:80
-			}));
-			client.close();
-		}
-
-		this.netserver.close(callback); // close server
 	}
 
 	once(event: "connection", listener: (client: TelnetClient) => void): EventEmitter;
