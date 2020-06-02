@@ -3,7 +3,7 @@ import "mocha";
 import { expect } from "chai";
 
 // local includes
-import * as dungeon from "./dungeon";
+import * as dungeon from "./dungeon3";
 import { Direction } from "./direction";
 
 let d: dungeon.Dungeon;
@@ -37,14 +37,14 @@ describe("dungeon", function(){
 
 	it("Create a mob.", function(done){
 		m = new dungeon.Mob();
-		expect(m.location).equal(null);
-		expect(m.x).equal(null);
-		expect(m.y).equal(null);
-		expect(m.z).equal(null);
+		expect(m.location).equal(undefined);
+		expect(m.x).equal(undefined);
+		expect(m.y).equal(undefined);
+		expect(m.z).equal(undefined);
 		done();
 	});
 
-	it("Create a mob and immediately move.", function(done){
+	it("Create a mob with an initial location.", function(done){
 		let room = d.getRoom({x:0,y:0,z:0});
 		let m2 = new dungeon.Mob({location:room});
 		expect(m2.location).is.equal(room);
@@ -56,13 +56,13 @@ describe("dungeon", function(){
 		let room = d.getRoom({x:0,y:0,z:0});
 		m.move(room);
 		expect(m.location).equal(room);
-		expect(m.location).not.equal(null);
+		expect(m.location).not.equal(undefined);
 		expect(room.contains(m)).equal(true);
 		expect(d.contains(m)).equal(true);
 		done();
 	});
 
-	it("Reciprocal/redundant movement.", function(done){
+	it("Testing redundant add/remove of Room contents.", function(done){
 		// redundant add/remove movement
 		let room = d.getRoom({x:0,y:0,z:0});
 		expect(m.location).is.equal(room);
@@ -88,6 +88,42 @@ describe("dungeon", function(){
 		expect(m.location).is.equal(room);
 		expect(room.contains(m)).is.true;
 		expect(room2.contains(m)).is.false;
+		done();
+	});
+
+	it("Testing DObject contents/location relationship.", function(done){
+		let dobj1 = new dungeon.DObject();
+		let dobj2 = new dungeon.DObject();
+		expect(dobj1.location).is.undefined;
+		expect(dobj2.location).is.undefined;
+		expect(dobj1.contents.length).is.equal(0);
+		expect(dobj2.contents.length).is.equal(0);
+
+		// move 1 inside 2
+		dobj1.location = dobj2;
+		expect(dobj1.location).is.equal(dobj2);
+		expect(dobj2.location).is.undefined;
+		expect(dobj2.contains(dobj1)).is.true;
+
+		// use remove
+		dobj2.remove(dobj1);
+		expect(dobj1.location).is.undefined;
+		expect(dobj2.location).is.undefined;
+		expect(dobj1.contents.length).is.equal(0);
+		expect(dobj2.contents.length).is.equal(0);
+
+		// use add
+		dobj2.add(dobj1);
+		expect(dobj1.location).is.equal(dobj2);
+		expect(dobj2.location).is.undefined;
+		expect(dobj2.contains(dobj1)).is.true;
+
+		// add to another location
+		let dobj3: dungeon.DObject = new dungeon.DObject();
+		dobj3.add(dobj1);
+		expect(dobj1.location).is.equal(dobj3);
+		expect(dobj2.contents).is.empty;
+		expect(dobj3.contains(dobj1)).is.true;
 		done();
 	});
 
@@ -145,21 +181,21 @@ describe("dungeon", function(){
 
 	it("Move mob off dungeon.", function(done){
 		let room = d.getRoom({x:0,y:0,z:0});
-		m.move(null);
-		expect(m.location).equal(null);
+		m.move(undefined);
+		expect(m.location).equal(undefined);
 		expect(m.location).not.equal(room);
 		expect(room.contains(m)).equal(false);
 		expect(d.contains(m)).equal(false);
 		done();
 	});
 
-	it("Testing fill.", function(done){
+	it("Create a dungeon that is initially filled.", function(done){
 		let filled: dungeon.Dungeon = new dungeon.Dungeon({proportions:{width:10,height:10,layers:1}, fill:true});
 		for(let z=0;z<1;z++){
 			for(let y=0;y<10;y++){
 				for(let x=0;x<10;x++){
 					let room = filled.getRoom({x:x,y:y,z:z});
-					expect(room).is.not.null;
+					expect(room).is.not.undefined;
 				}
 			}
 		}
@@ -167,36 +203,7 @@ describe("dungeon", function(){
 		done();
 	});
 
-	it("Testing DObject contents/location reciprocality.", function(done){
-		let dobj1 = new dungeon.DObject();
-		let dobj2 = new dungeon.DObject();
-		expect(dobj1.location).is.null;
-		expect(dobj2.location).is.null;
-		expect(dobj1.contents.length).is.equal(0);
-		expect(dobj2.contents.length).is.equal(0);
-
-		// move 1 inside 2
-		dobj1.location = dobj2;
-		expect(dobj1.location).is.equal(dobj2);
-		expect(dobj2.location).is.null;
-		expect(dobj2.contains(dobj1)).is.true;
-
-		// use remove
-		dobj2.remove(dobj1);
-		expect(dobj1.location).is.null;
-		expect(dobj2.location).is.null;
-		expect(dobj1.contents.length).is.equal(0);
-		expect(dobj2.contents.length).is.equal(0);
-		done();
-
-		// use add
-		dobj2.add(dobj1);
-		expect(dobj1.location).is.equal(dobj2);
-		expect(dobj2.location).is.null;
-		expect(dobj2.contains(dobj1)).is.true;
-	});
-
-	it("Testing redundant adding/removing of occupiers.", function(done){
+	it("Testing redundant adding/removing of DObject contents.", function(done){
 		let room = d.getRoom({x:0,y:0,z:0});
 		expect(d.contains(room)).is.true;
 		d.add(room);
@@ -208,7 +215,7 @@ describe("dungeon", function(){
 		done();
 	});
 
-	it("Testing limits.", function(done){
+	it("Testing Dungeon dimension limits.", function(done){
 		// out of bounds
 		let error: Error|undefined;
 		try{

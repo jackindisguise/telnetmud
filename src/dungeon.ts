@@ -13,24 +13,6 @@ export type CartesianCoordinates = {
 	z:number
 }
 
-export interface Occupier{
-	location: Occupiable|null;
-}
-
-export interface Occupiable{
-	add(occupier:Occupier): void;
-	remove(occupier:Occupier): void;
-	contains(occupier:Occupier): boolean;
-	allowEnter(location:Occupier): boolean;
-	allowExit(location:Occupier): boolean;
-	contents: Occupier[];
-}
-
-export interface Movable{
-	canMove(location:Occupiable): boolean;
-	move(location:Occupiable): boolean;
-}
-
 export class CoordinateOutOfBoundsError extends Error{
 	coordinate: string;
 	value: number;
@@ -70,26 +52,26 @@ type DungeonOptions = {
 }
 
 export class Dungeon{
-	contents: (Occupier|Occupiable)[] = [];
-	grid!: (Room|null)[][][];
+	contents: (Room|DObject)[] = [];
+	grid!: (Room|undefined)[][][];
 	proportions: Dimensions;
 	constructor(options: DungeonOptions){
 		this.proportions = options.proportions;
 		this.buildGrid(options.fill);
 	}
 
-	add(occupier:Occupier|Occupiable): void{
+	add(occupier:Room|DObject): void{
 		if(this.contents.indexOf(occupier) != -1) return;
 		this.contents.push(occupier);
 	}
 
-	remove(occupier:Occupier|Occupiable): void{
+	remove(occupier:Room|DObject): void{
 		let i:number = this.contents.indexOf(occupier);
 		if(i == -1) return;
 		this.contents.splice(i, 1);
 	}
 
-	contains(occupier:Occupier|Occupiable): boolean{
+	contains(occupier:Room|DObject): boolean{
 		return (this.contents.indexOf(occupier) != -1);
 	}
 
@@ -119,7 +101,7 @@ export class Dungeon{
 		if(coordinates.x < 0 || coordinates.x >= this.proportions.width) throw new CoordinateOutOfBoundsError("x", coordinates.x);
 		if(coordinates.y < 0 || coordinates.y >= this.proportions.height) throw new CoordinateOutOfBoundsError("y", coordinates.y);
 		if(coordinates.z < 0 || coordinates.z >= this.proportions.layers) throw new CoordinateOutOfBoundsError("z", coordinates.z);
-		let room:Room|null = this.grid[coordinates.z][coordinates.y][coordinates.x];
+		let room:Room|undefined = this.grid[coordinates.z][coordinates.y][coordinates.x];
 		if(!room) throw new NoRoomError(this, coordinates);
 		return room;
 	}
@@ -141,12 +123,12 @@ type RoomOptions = {
 	coordinates: CartesianCoordinates
 }
 
-export class Room implements Occupiable{
+export class Room{
 	name: string = "a room";
 	description: string = "It's a room.";
 	private _dungeon: Dungeon;
 	private _coordinates: CartesianCoordinates;
-	private _contents: Occupier[] = [];
+	private _contents: DObject[] = [];
 	constructor(options: RoomOptions){
 		this._dungeon = options.dungeon;
 		this._coordinates = options.coordinates;
@@ -160,7 +142,7 @@ export class Room implements Occupiable{
 		return this._coordinates;
 	}
 
-	get contents(): Occupier[]{
+	get contents(): DObject[]{
 		return this._contents;
 	}
 
@@ -176,30 +158,30 @@ export class Room implements Occupiable{
 		return this._coordinates.z;
 	}
 
-	add(occupier:Occupier): void{
+	add(occupier:DObject): void{
 		if(this.contents.indexOf(occupier) != -1) return;
 		this.contents.push(occupier);
 		if(occupier.location != this) occupier.location = this;
 		this.dungeon.add(occupier);
 	}
 
-	remove(occupier:Occupier): void{
+	remove(occupier:DObject): void{
 		let i:number = this.contents.indexOf(occupier);
 		if(i == -1) return;
 		this.contents.splice(i, 1);
 		this.dungeon.remove(occupier);
-		if(occupier.location == this) occupier.location = null;
+		if(occupier.location == this) occupier.location = undefined;
 	}
 
-	contains(occupier:Occupier): boolean{
+	contains(occupier:DObject): boolean{
 		return (this.contents.indexOf(occupier) != -1);
 	}
 
-	allowEnter(occupier:Occupier): boolean{
+	allowEnter(occupier:DObject): boolean{
 		return true;
 	}
 
-	allowExit(occupier:Occupier): boolean{
+	allowExit(occupier:DObject): boolean{
 		return true;
 	}
 
@@ -209,14 +191,14 @@ export class Room implements Occupiable{
 }
 
 type DObjectOptions = {
-	location?: Occupiable
+	location?: DObject|Room
 };
 
-export class DObject implements Occupiable, Occupier{
+export class DObject{
 	keywords: string = "dobject";
 	display: string = "DObject";
-	private _location: Occupiable|null = null;
-	private _contents: Occupier[] = [];
+	private _location: Room|DObject|undefined;
+	private _contents: DObject[] = [];
 	constructor(options?:DObjectOptions){
 		if(!options) return;
 		if(options.location) this.location = options.location;
@@ -235,14 +217,14 @@ export class DObject implements Occupiable, Occupier{
 		this.display = name;
 	}
 
-	get location(): Occupiable|null{
+	get location(): Room|DObject|undefined{
 		return this._location;
 	}
 
-	set location(location:Occupiable|null){
+	set location(location:Room|DObject|undefined){
 		if(this.location) {
-			let olocation: Occupiable = this.location;
-			this._location = null;
+			let olocation: Room|DObject|undefined = this.location;
+			this._location = undefined;
 			olocation.remove(this);
 		}
 
@@ -251,59 +233,56 @@ export class DObject implements Occupiable, Occupier{
 		location.add(this);
 	}
 
-	get contents(): Occupier[]{
+	get contents(): DObject[]{
 		return this._contents;
 	}
 
-	get x(): number|null{
+	get x(): number|undefined{
 		if(this.location && this.location instanceof Room) return this.location.x;
-		return null;
 	}
 
-	get y(): number|null{
+	get y(): number|undefined{
 		if(this.location && this.location instanceof Room) return this.location.y;
-		return null;
 	}
 
-	get z(): number|null{
+	get z(): number|undefined{
 		if(this.location && this.location instanceof Room) return this.location.z;
-		return null;
 	}
 
-	add(occupier:Occupier): void{
+	add(occupier:DObject): void{
 		if(this.contents.indexOf(occupier) != -1) return;
 		this.contents.push(occupier);
 		if(occupier.location != this) occupier.location = this;
 	}
 
-	remove(occupier:Occupier): void{
+	remove(occupier:DObject): void{
 		let i:number = this.contents.indexOf(occupier);
 		if(i == -1) return;
 		this.contents.splice(i, 1);
-		if(occupier.location == this) occupier.location = null;
+		if(occupier.location == this) occupier.location = undefined;
 	}
 
-	contains(occupier:Occupier): boolean{
+	contains(occupier:DObject): boolean{
 		return (this.contents.indexOf(occupier) != -1);
 	}
 
-	allowEnter(location:Occupier): boolean{
+	allowEnter(location:DObject): boolean{
 		return true;
 	}
 
-	allowExit(location:Occupier): boolean{
+	allowExit(location:DObject): boolean{
 		return true;
 	}
 }
 
-export class Mob extends DObject implements Movable{
-	canMove(location:Occupiable): boolean{
+export class Movable extends DObject{
+	canMove(location:DObject|Room): boolean{
 		if(this.location && !this.location.allowExit(this)) return false;
 		if(!location.allowEnter(this)) return false;
 		return true;
 	}
 
-	move(location:Occupiable|null): boolean{
+	move(location:DObject|Room|undefined): boolean{
 		if(location && !this.canMove(location)) return false;
 		this.location = location;
 		return true;
@@ -326,18 +305,12 @@ export class Mob extends DObject implements Movable{
 	}
 }
 
-export class Item extends DObject implements Movable{
-	canMove(location:Occupiable): boolean{
-		if(this.location && !this.location.allowExit(this)) return false;
-		if(location.allowEnter(this)) return false;
-		return true;
-	}
+export class Mob extends Movable{
 
-	move(location:Occupiable|null): boolean{
-		if(location && !this.canMove(location)) return false;
-		this.location = location;
-		return true;
-	}
+}
+
+export class Item extends DObject{
+
 }
 
 export class Equipment extends Item{
