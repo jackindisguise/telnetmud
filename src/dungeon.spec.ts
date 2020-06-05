@@ -3,7 +3,7 @@ import "mocha";
 import { expect } from "chai";
 
 // local includes
-import * as dungeon from "./dungeon3";
+import * as dungeon from "./dungeon";
 import { Direction } from "./direction";
 
 let d: dungeon.Dungeon;

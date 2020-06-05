@@ -107,14 +107,13 @@ export class Dungeon{
 	}
 
 	getStep(coordinates:CartesianCoordinates, direction:Direction): Room{
-		let mCoordinates: CartesianCoordinates = {x:coordinates.x, y:coordinates.y, z:coordinates.z};
-		if(direction&Direction.NORTH) mCoordinates.y--;
-		else if(direction&Direction.SOUTH) mCoordinates.y++;
-		if(direction&Direction.EAST) mCoordinates.x++;
-		else if(direction&Direction.WEST) mCoordinates.x--;
-		if(direction&Direction.UP) mCoordinates.z++;
-		else if(direction&Direction.DOWN) mCoordinates.z--;
-		return this.getRoom(mCoordinates);
+		if(direction&Direction.NORTH) coordinates.y--;
+		else if(direction&Direction.SOUTH) coordinates.y++;
+		if(direction&Direction.EAST) coordinates.x++;
+		else if(direction&Direction.WEST) coordinates.x--;
+		if(direction&Direction.UP) coordinates.z++;
+		else if(direction&Direction.DOWN) coordinates.z--;
+		return this.getRoom(coordinates);
 	}
 }
 
@@ -139,7 +138,7 @@ export class Room{
 	}
 
 	get coordinates(): CartesianCoordinates{
-		return this._coordinates;
+		return {x:this.x, y:this.y, z:this.z};
 	}
 
 	get contents(): DObject[]{
@@ -237,6 +236,10 @@ export class DObject{
 		return this._contents;
 	}
 
+	get coordinates(): CartesianCoordinates|undefined{
+		if(this.location && this.location instanceof Room) return this.location.coordinates;
+	}
+
 	get x(): number|undefined{
 		if(this.location && this.location instanceof Room) return this.location.x;
 	}
@@ -289,8 +292,8 @@ export class Movable extends DObject{
 	}
 
 	getStep(direction:Direction): Room{
-		if(!this.location) throw new Error("Not located on a room.");
-		if(!(this.location instanceof Room)) throw new Error("Not located on a room."); 
+		if(!this.location) throw new Error("Trying to step with no location.");
+		if(!(this.location instanceof Room)) throw new Error("Trying to step while not in a room."); 
 		return this.location.getStep(direction);
 	}
 
@@ -300,6 +303,7 @@ export class Movable extends DObject{
 	}
 
 	step(direction:Direction): boolean{
+		if(!this.canStep(direction)) return false;
 		let room:Room = this.getStep(direction);
 		return this.move(room);
 	}

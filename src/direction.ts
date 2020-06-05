@@ -24,13 +24,13 @@ export enum DirectionWord {
 	DOWN = "down"
 }
 
-export enum DirectionShortWord {
+export enum DirectionWordShort {
 	NORTH = "n",
 	SOUTH = "s",
 	EAST = "e",
 	WEST = "w",
 	NORTHEAST = "ne",
-	NORTHWEST = "nW",
+	NORTHWEST = "nw",
 	SOUTHEAST = "se",
 	SOUTHWEST = "sw",
 	UP = "u",
@@ -63,47 +63,68 @@ export const DirectionWords: DirectionWord[] = [
 	DirectionWord.DOWN
 ];
 
-export const DirectionShortWords: DirectionShortWord[] = [
-	DirectionShortWord.NORTH,
-	DirectionShortWord.SOUTH,
-	DirectionShortWord.EAST,
-	DirectionShortWord.WEST,
-	DirectionShortWord.NORTHEAST,
-	DirectionShortWord.NORTHWEST,
-	DirectionShortWord.SOUTHEAST,
-	DirectionShortWord.SOUTHWEST,
-	DirectionShortWord.UP,
-	DirectionShortWord.DOWN
+export const DirectionWordShorts: DirectionWordShort[] = [
+	DirectionWordShort.NORTH,
+	DirectionWordShort.SOUTH,
+	DirectionWordShort.EAST,
+	DirectionWordShort.WEST,
+	DirectionWordShort.NORTHEAST,
+	DirectionWordShort.NORTHWEST,
+	DirectionWordShort.SOUTHEAST,
+	DirectionWordShort.SOUTHWEST,
+	DirectionWordShort.UP,
+	DirectionWordShort.DOWN
 ];
 
-export function direction2words(direction:Direction, short?: boolean): DirectionWord|DirectionShortWord{
-	switch(direction){
-		case Direction.NORTH: return (short ? DirectionShortWord.NORTH : DirectionWord.NORTH);
-		case Direction.SOUTH: return (short ? DirectionShortWord.SOUTH : DirectionWord.SOUTH);
-		case Direction.EAST: return (short ? DirectionShortWord.EAST : DirectionWord.EAST);
-		case Direction.WEST: return (short ? DirectionShortWord.WEST : DirectionWord.WEST);
-		case Direction.NORTHEAST: return (short ? DirectionShortWord.NORTHEAST : DirectionWord.NORTHEAST);
-		case Direction.NORTHWEST: return (short ? DirectionShortWord.NORTHWEST : DirectionWord.NORTHWEST);
-		case Direction.SOUTHEAST: return (short ? DirectionShortWord.SOUTHEAST : DirectionWord.SOUTHEAST);
-		case Direction.SOUTHWEST: return (short ? DirectionShortWord.SOUTHWEST : DirectionWord.SOUTHWEST);
-		case Direction.UP: return (short ? DirectionShortWord.UP : DirectionWord.UP);
-		case Direction.DOWN: return (short ? DirectionShortWord.DOWN : DirectionWord.DOWN);
-		default: throw new Error(`Invalid direction: ${direction}`);
-	}
-}
+export const Direction2Word: Map<Direction, DirectionWord> = new Map<Direction, DirectionWord>([
+	[Direction.NORTH, DirectionWord.NORTH],
+	[Direction.SOUTH, DirectionWord.SOUTH],
+	[Direction.EAST, DirectionWord.EAST],
+	[Direction.WEST, DirectionWord.WEST],
+	[Direction.NORTHEAST, DirectionWord.NORTHEAST],
+	[Direction.NORTHWEST, DirectionWord.NORTHWEST],
+	[Direction.SOUTHEAST, DirectionWord.SOUTHEAST],
+	[Direction.SOUTHWEST, DirectionWord.SOUTHWEST],
+	[Direction.UP, DirectionWord.UP],
+	[Direction.DOWN, DirectionWord.DOWN]
+]);
 
-export function words2direction(direction:DirectionWord): Direction{
-	switch(direction){
-		case DirectionWord.NORTH: return Direction.NORTH;
-		case DirectionWord.SOUTH: return Direction.SOUTH;
-		case DirectionWord.EAST: return Direction.EAST;
-		case DirectionWord.WEST: return Direction.WEST;
-		case DirectionWord.NORTHEAST: return Direction.NORTHEAST;
-		case DirectionWord.NORTHWEST: return Direction.NORTHWEST;
-		case DirectionWord.SOUTHEAST: return Direction.SOUTHEAST;
-		case DirectionWord.SOUTHWEST: return Direction.SOUTHWEST;
-		case DirectionWord.UP: return Direction.UP;
-		case DirectionWord.DOWN: return Direction.DOWN;
-		default: throw new Error(`Invalid direction word: '%{direction}'`);
-	}
-}
+
+export const Direction2WordShort: Map<Direction, DirectionWordShort> = new Map<Direction, DirectionWordShort>([
+	[Direction.NORTH, DirectionWordShort.NORTH],
+	[Direction.SOUTH, DirectionWordShort.SOUTH],
+	[Direction.EAST, DirectionWordShort.EAST],
+	[Direction.WEST, DirectionWordShort.WEST],
+	[Direction.NORTHEAST, DirectionWordShort.NORTHEAST],
+	[Direction.NORTHWEST, DirectionWordShort.NORTHWEST],
+	[Direction.SOUTHEAST, DirectionWordShort.SOUTHEAST],
+	[Direction.SOUTHWEST, DirectionWordShort.SOUTHWEST],
+	[Direction.UP, DirectionWordShort.UP],
+	[Direction.DOWN, DirectionWordShort.DOWN]
+]);
+
+export const Word2Direction: Map<DirectionWord, Direction> = new Map<DirectionWord, Direction>([
+	[DirectionWord.NORTH, Direction.NORTH],
+	[DirectionWord.SOUTH, Direction.SOUTH],
+	[DirectionWord.EAST, Direction.EAST],
+	[DirectionWord.WEST, Direction.WEST],
+	[DirectionWord.NORTHEAST, Direction.NORTHEAST],
+	[DirectionWord.NORTHWEST, Direction.NORTHWEST],
+	[DirectionWord.SOUTHEAST, Direction.SOUTHEAST],
+	[DirectionWord.SOUTHWEST, Direction.SOUTHWEST],
+	[DirectionWord.UP, Direction.UP],
+	[DirectionWord.DOWN, Direction.DOWN]
+]);
+
+export const WordShort2Direction: Map<DirectionWordShort, Direction> = new Map<DirectionWordShort, Direction>([
+	[DirectionWordShort.NORTH, Direction.NORTH],
+	[DirectionWordShort.SOUTH, Direction.SOUTH],
+	[DirectionWordShort.EAST, Direction.EAST],
+	[DirectionWordShort.WEST, Direction.WEST],
+	[DirectionWordShort.NORTHEAST, Direction.NORTHEAST],
+	[DirectionWordShort.NORTHWEST, Direction.NORTHWEST],
+	[DirectionWordShort.SOUTHEAST, Direction.SOUTHEAST],
+	[DirectionWordShort.SOUTHWEST, Direction.SOUTHWEST],
+	[DirectionWordShort.UP, Direction.UP],
+	[DirectionWordShort.DOWN, Direction.DOWN]
+]);
