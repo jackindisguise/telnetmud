@@ -60,13 +60,13 @@ describe("io", function(){
 		client.sendLine("Hello.");
 	});
 
-	it("Disconnect client manually on server's side.", function(done){
+	it("Disconnect client manually on client's side.", function(done){
 		client.once("disconnect", function(reason: string){
-			expect(reason).is.equal("close");
+			expect(reason).is.equal("end");
 			done();
 		});
 
-		client.close();
+		clientSocket.end();
 	});
 
 	it("Connect a 2nd Telnet client.", function(done){
@@ -78,15 +78,6 @@ describe("io", function(){
 		clientSocket = net.connect({port:9999}, function(){
 			clientSocket.setEncoding("binary");
 		});
-	});
-
-	it("Disconnect client manually on client's side.", function(done){
-		client.once("disconnect", function(reason: string){
-			expect(reason).is.equal("end");
-			done();
-		});
-
-		clientSocket.end();
 	});
 
 	it("Close server and socket.", function(done){

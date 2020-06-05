@@ -310,7 +310,9 @@ export class Movable extends DObject{
 }
 
 export class Mob extends Movable{
-
+	health: number = 100;
+	mana: number = 100;
+	energy: number = 100;
 }
 
 export class Item extends DObject{

@@ -119,7 +119,7 @@ export class MUD{
 		});
 
 		MUD.server.open(port, function(){
-			logger.info(_("started on port %s", "23"));
+			logger.info(_("started on port %s", port.toString()));
 		});
 	}
 

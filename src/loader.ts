@@ -4,7 +4,7 @@ import * as database from "./database";
 import * as help from "./help";
 
 function loadGameFile(done: Function){
-	fs.readFile(database.gameFile, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
+	fs.readFile(database.gameFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
 		let yml = yaml.parse(data);
 		if(yml.name) database.config.game.name = yml.name;
 		if(yml.version) database.config.game.version = yml.version;
@@ -13,7 +13,7 @@ function loadGameFile(done: Function){
 };
 
 function loadServerFile(done: Function){
-	fs.readFile(database.serverFile, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
+	fs.readFile(database.serverFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
 		let yml = yaml.parse(data);
 		if(yml.port) database.config.server.port = yml.port;
 		done();
@@ -21,18 +21,21 @@ function loadServerFile(done: Function){
 };
 
 function loadHelpFiles(done: Function){
-	fs.readdir(database.helpFiles, function(err: NodeJS.ErrnoException | null, files: string[]){
+	fs.readdir(database.helpFilePath, function(err: NodeJS.ErrnoException | null, files: string[]){
+		let c = files.length;
 		for(let file of files){
-			let path = database.helpFiles + "/" + file;
+			let path = database.helpFilePath + "/" + file;
 			fs.readFile(path, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
 				let yml = yaml.parse(data);
 				if(yml && yml.keywords && yml.body) {
 					let helpFile = new help.HelpFile({keywords:yml.keywords, body:yml.body});
 					database.addHelpFile(helpFile);
 				}
+
+				c--;
+				if(c===0) done();
 			});
 		}
-		done();
 	});
 }
 

@@ -1,6 +1,26 @@
 export const ColorEscapeCharacter: string = "{";
 export const ColorEscapeRegExp: RegExp = new RegExp(`${ColorEscapeCharacter}(.?)`, "g");
 
+export enum Color {
+	BLINK,
+	CLEAR,
+	MAROON,
+	DARK_GREEN,
+	OLIVE,
+	NAVY,
+	PURPLE,
+	TEAL,
+	SILVER,
+	GREY,
+	CRIMSON,
+	LIME,
+	YELLOW,
+	BLUE,
+	PINK,
+	CYAN,
+	WHITE,
+}
+
 export enum ColorCharacter {
 	BLINK			= "!",
 	CLEAR			= "x",
@@ -21,51 +41,76 @@ export enum ColorCharacter {
 	WHITE			= "W",
 }
 
-export namespace ColorGroup {
-	export enum Telnet {
-		BLINK		= "\u001b[5m",
-		CLEAR		= "\u001b[0m",
-		MAROON		= "\u001b[0;31m",
-		DARK_GREEN	= "\u001b[0;32m",
-		OLIVE		= "\u001b[0;33m",
-		NAVY		= "\u001b[0;34m",
-		PURPLE		= "\u001b[0;35m",
-		TEAL		= "\u001b[0;36m",
-		SILVER		= "\u001b[0;37m",
-		GREY		= "\u001b[1;30m",
-		CRIMSON		= "\u001b[1;31m",
-		LIME		= "\u001b[1;32m",
-		YELLOW		= "\u001b[1;33m",
-		BLUE		= "\u001b[1;34m",
-		PINK		= "\u001b[1;35m",
-		CYAN		= "\u001b[1;36m",
-		WHITE		= "\u001b[1;37m"
-	}
+export const Color2Character: Map<Color, string> = new Map<Color, string>([
+	[Color.BLINK, ColorCharacter.BLINK],
+	[Color.CLEAR, ColorCharacter.CLEAR],
+	[Color.MAROON, ColorCharacter.MAROON],
+	[Color.DARK_GREEN, ColorCharacter.DARK_GREEN],
+	[Color.OLIVE, ColorCharacter.OLIVE],
+	[Color.NAVY, ColorCharacter.NAVY],
+	[Color.PURPLE, ColorCharacter.PURPLE],
+	[Color.TEAL, ColorCharacter.TEAL],
+	[Color.SILVER, ColorCharacter.SILVER],
+	[Color.GREY, ColorCharacter.GREY],
+	[Color.CRIMSON, ColorCharacter.CRIMSON],
+	[Color.LIME, ColorCharacter.LIME],
+	[Color.YELLOW, ColorCharacter.YELLOW],
+	[Color.BLUE, ColorCharacter.BLUE],
+	[Color.PINK, ColorCharacter.PINK],
+	[Color.CYAN, ColorCharacter.CYAN],
+	[Color.WHITE, ColorCharacter.WHITE]
+]);
+
+export const Character2Color: Map<string, Color> = new Map<string, Color>([
+	[ColorCharacter.BLINK, Color.BLINK],
+	[ColorCharacter.CLEAR, Color.CLEAR],
+	[ColorCharacter.MAROON, Color.MAROON],
+	[ColorCharacter.DARK_GREEN, Color.DARK_GREEN],
+	[ColorCharacter.OLIVE, Color.OLIVE],
+	[ColorCharacter.NAVY, Color.NAVY],
+	[ColorCharacter.PURPLE, Color.PURPLE],
+	[ColorCharacter.TEAL, Color.TEAL],
+	[ColorCharacter.SILVER, Color.SILVER],
+	[ColorCharacter.GREY, Color.GREY],
+	[ColorCharacter.CRIMSON, Color.CRIMSON],
+	[ColorCharacter.LIME, Color.LIME],
+	[ColorCharacter.YELLOW, Color.YELLOW],
+	[ColorCharacter.BLUE, Color.BLUE],
+	[ColorCharacter.PINK, Color.PINK],
+	[ColorCharacter.CYAN, Color.CYAN],
+	[ColorCharacter.WHITE, Color.WHITE]
+]);
+
+export namespace ColorMap {
+	export const Telnet: Map<Color, string> = new Map<Color, string>([
+		[Color.BLINK, "\u001b[5m"],
+		[Color.CLEAR, "\u001b[0m"],
+		[Color.MAROON, "\u001b[0;31m"],
+		[Color.DARK_GREEN, "\u001b[0;32m"],
+		[Color.OLIVE, "\u001b[0;33m"],
+		[Color.NAVY, "\u001b[0;34m"],
+		[Color.PURPLE, "\u001b[0;35m"],
+		[Color.TEAL, "\u001b[0;36m"],
+		[Color.SILVER, "\u001b[0;37m"],
+		[Color.GREY, "\u001b[1;30m"],
+		[Color.CRIMSON, "\u001b[1;31m"],
+		[Color.LIME, "\u001b[1;32m"],
+		[Color.YELLOW, "\u001b[1;33m"],
+		[Color.BLUE, "\u001b[1;34m"],
+		[Color.PINK, "\u001b[1;35m"],
+		[Color.CYAN, "\u001b[1;36m"],
+		[Color.WHITE, "\u001b[1;37m"]
+	]);
 }
 
 export namespace ColorReplace {
 	export function Telnet(substr: string, char: string): string{
-		switch(char){
-			case ColorEscapeCharacter: return ColorEscapeCharacter;
-			case ColorCharacter.BLINK: return ColorGroup.Telnet.BLINK;
-			case ColorCharacter.CLEAR: return ColorGroup.Telnet.CLEAR;
-			case ColorCharacter.MAROON: return ColorGroup.Telnet.MAROON;
-			case ColorCharacter.CRIMSON: return ColorGroup.Telnet.CRIMSON;
-			case ColorCharacter.DARK_GREEN: return ColorGroup.Telnet.DARK_GREEN;
-			case ColorCharacter.LIME: return ColorGroup.Telnet.LIME;
-			case ColorCharacter.NAVY: return ColorGroup.Telnet.NAVY;
-			case ColorCharacter.BLUE: return ColorGroup.Telnet.BLUE;
-			case ColorCharacter.OLIVE: return ColorGroup.Telnet.OLIVE;
-			case ColorCharacter.YELLOW: return ColorGroup.Telnet.YELLOW;
-			case ColorCharacter.PURPLE: return ColorGroup.Telnet.PURPLE;
-			case ColorCharacter.PINK: return ColorGroup.Telnet.PINK;
-			case ColorCharacter.TEAL: return ColorGroup.Telnet.TEAL;
-			case ColorCharacter.CYAN: return ColorGroup.Telnet.CYAN;
-			case ColorCharacter.SILVER: return ColorGroup.Telnet.SILVER;
-			case ColorCharacter.WHITE: return ColorGroup.Telnet.WHITE;
-			case ColorCharacter.GREY: return ColorGroup.Telnet.GREY;
-			default: return "";
-		}
+		if(char === ColorEscapeCharacter) return ColorEscapeCharacter;
+		let color = Character2Color.get(char); // convert character to color code
+		if(color===undefined) return ""; // if not valid, return nothing
+		let code = ColorMap.Telnet.get(color); // map color to telnet color code
+		if(!code) return ""; // if not valid, return nothing
+		return code;
 	}
 }
 
