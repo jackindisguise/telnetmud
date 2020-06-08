@@ -21,24 +21,46 @@ export enum Color {
 	WHITE,
 }
 
-export enum ColorCharacter {
-	BLINK			= "!",
-	CLEAR			= "x",
-	MAROON			= "r",
-	DARK_GREEN		= "g",
-	OLIVE			= "y",
-	NAVY			= "b",
-	PURPLE			= "p",
-	TEAL			= "c",
-	SILVER			= "w",
-	GREY			= "D",
-	CRIMSON			= "R",
-	LIME			= "G",
-	YELLOW			= "Y",
-	BLUE			= "B",
-	PINK			= "P",
-	CYAN			= "C",
-	WHITE			= "W",
+export namespace ColorCharacter {
+	export const BLINK: string		= "!";
+	export const CLEAR: string		= "x";
+	export const MAROON: string		= "r";
+	export const DARK_GREEN: string	= "g";
+	export const OLIVE: string		= "y";
+	export const NAVY: string		= "b";
+	export const PURPLE: string		= "p";
+	export const TEAL: string		= "c";
+	export const SILVER: string		= "w";
+	export const GREY: string		= "D";
+	export const CRIMSON: string	= "R";
+	export const LIME: string		= "G";
+	export const YELLOW: string		= "Y";
+	export const BLUE: string		= "B";
+	export const PINK: string		= "P";
+	export const CYAN: string		= "C";
+	export const WHITE: string		= "W";
+}
+
+export namespace ColorCode {
+	export namespace Telnet {
+		export const BLINK: string = "\u001b[5m";
+		export const CLEAR: string = "\u001b[0m";
+		export const MAROON: string = "\u001b[0;31m";
+		export const DARK_GREEN: string = "\u001b[0;32m";
+		export const OLIVE: string = "\u001b[0;33m";
+		export const NAVY: string = "\u001b[0;34m";
+		export const PURPLE: string = "\u001b[0;35m";
+		export const TEAL: string = "\u001b[0;36m";
+		export const SILVER: string = "\u001b[0;37m";
+		export const GREY: string = "\u001b[1;30m";
+		export const CRIMSON: string = "\u001b[1;31m";
+		export const LIME: string = "\u001b[1;32m";
+		export const YELLOW: string = "\u001b[1;33m";
+		export const BLUE: string = "\u001b[1;34m";
+		export const PINK: string = "\u001b[1;35m";
+		export const CYAN: string = "\u001b[1;36m";
+		export const WHITE: string = "\u001b[1;37m";
+	}
 }
 
 export const Color2Character: Map<Color, string> = new Map<Color, string>([
@@ -81,36 +103,36 @@ export const Character2Color: Map<string, Color> = new Map<string, Color>([
 	[ColorCharacter.WHITE, Color.WHITE]
 ]);
 
-export namespace ColorMap {
+export namespace ColorCodeMap {
 	export const Telnet: Map<Color, string> = new Map<Color, string>([
-		[Color.BLINK, "\u001b[5m"],
-		[Color.CLEAR, "\u001b[0m"],
-		[Color.MAROON, "\u001b[0;31m"],
-		[Color.DARK_GREEN, "\u001b[0;32m"],
-		[Color.OLIVE, "\u001b[0;33m"],
-		[Color.NAVY, "\u001b[0;34m"],
-		[Color.PURPLE, "\u001b[0;35m"],
-		[Color.TEAL, "\u001b[0;36m"],
-		[Color.SILVER, "\u001b[0;37m"],
-		[Color.GREY, "\u001b[1;30m"],
-		[Color.CRIMSON, "\u001b[1;31m"],
-		[Color.LIME, "\u001b[1;32m"],
-		[Color.YELLOW, "\u001b[1;33m"],
-		[Color.BLUE, "\u001b[1;34m"],
-		[Color.PINK, "\u001b[1;35m"],
-		[Color.CYAN, "\u001b[1;36m"],
-		[Color.WHITE, "\u001b[1;37m"]
+		[Color.BLINK, ColorCode.Telnet.BLINK],
+		[Color.CLEAR, ColorCode.Telnet.CLEAR],
+		[Color.MAROON, ColorCode.Telnet.MAROON],
+		[Color.DARK_GREEN, ColorCode.Telnet.DARK_GREEN],
+		[Color.OLIVE, ColorCode.Telnet.OLIVE],
+		[Color.NAVY, ColorCode.Telnet.NAVY],
+		[Color.PURPLE, ColorCode.Telnet.PURPLE],
+		[Color.TEAL, ColorCode.Telnet.TEAL],
+		[Color.SILVER, ColorCode.Telnet.SILVER],
+		[Color.GREY, ColorCode.Telnet.GREY],
+		[Color.CRIMSON, ColorCode.Telnet.CRIMSON],
+		[Color.LIME, ColorCode.Telnet.LIME],
+		[Color.YELLOW, ColorCode.Telnet.YELLOW],
+		[Color.BLUE, ColorCode.Telnet.BLUE],
+		[Color.PINK, ColorCode.Telnet.PINK],
+		[Color.CYAN, ColorCode.Telnet.CYAN],
+		[Color.WHITE, ColorCode.Telnet.WHITE]
 	]);
 }
 
 export namespace ColorReplace {
 	export function Telnet(substr: string, char: string): string{
 		if(char === ColorEscapeCharacter) return ColorEscapeCharacter;
-		let color = Character2Color.get(char); // convert character to color code
-		if(color===undefined) return ""; // if not valid, return nothing
-		let code = ColorMap.Telnet.get(color); // map color to telnet color code
-		if(!code) return ""; // if not valid, return nothing
-		return code;
+		let color = Character2Color.get(char); // convert character to color
+		if(color===undefined) return ""; // if not valid, return empty string instead
+		let code = ColorCodeMap.Telnet.get(color); // map color to telnet color code
+		if(!code) return ""; // if not valid, return empty string instead
+		return code; // return color code
 	}
 }
 

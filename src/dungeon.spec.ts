@@ -306,4 +306,29 @@ describe("dungeon", function(){
 		expect(error instanceof dungeon.NoRoomError).is.true;
 		done();
 	});
+
+	it("Change from one dungeon to another.", function(done){
+		let d1 = new dungeon.Dungeon({proportions:{width:10,height:10,layers:10}, fill:true});
+		let r1 = d1.getRoom(0,0,0);
+		let d2 = new dungeon.Dungeon({proportions:{width:10,height:10,layers:10}, fill:true});
+		let r2 = d2.getRoom(0,0,0);
+		let m = new dungeon.Mob();
+
+		// move to d1
+		expect(m.move(r1)).is.true;
+		expect(m.location).is.equal(r1);
+		expect(r1.contains(m)).is.true;
+		expect(r2.contains(m)).is.false;
+		expect(d1.contains(m)).is.true;
+		expect(d2.contains(m)).is.false;
+
+		// move to d2
+		expect(m.move(r2)).is.true;
+		expect(m.location).is.equal(r2);
+		expect(r1.contains(m)).is.false;
+		expect(r2.contains(m)).is.true;
+		expect(d1.contains(m)).is.false;
+		expect(d2.contains(m)).is.true;
+		done();
+	});
 });

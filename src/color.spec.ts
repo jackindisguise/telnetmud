@@ -20,13 +20,13 @@ describe("color", function(){
 	});
 
 	it("Telnet color.", function(done){
-		let characters = color.ColorMap.Telnet.entries();
+		let characters = color.ColorCodeMap.Telnet.entries();
 		for(let values of characters){
 			let char = color.Color2Character.get(values[0]);
 			if(!char) continue;
 			let pre = `{${char}this is a test{x`;
 			let colored = color.color(pre, color.ColorReplace.Telnet);
-			let expected = `${values[1]}this is a test${color.ColorMap.Telnet.get(color.Color.CLEAR)}`;
+			let expected = `${values[1]}this is a test${color.ColorCodeMap.Telnet.get(color.Color.CLEAR)}`;
 			expect(colored).is.equal(expected);
 		}
 		done();

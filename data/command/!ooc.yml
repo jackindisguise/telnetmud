@@ -1,0 +1,4 @@
+---
+regex: (?:o|oo|ooc)\b
+fun: |-2
+  player.sendMessage("What do you want to say?", MessageCategory.DEFAULT);

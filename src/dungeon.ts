@@ -97,13 +97,18 @@ export class Dungeon{
 		return room;
 	}
 
-	getRoom(coordinates:CartesianCoordinates): Room{
-		if(coordinates.x < 0 || coordinates.x >= this.proportions.width) throw new CoordinateOutOfBoundsError("x", coordinates.x);
-		if(coordinates.y < 0 || coordinates.y >= this.proportions.height) throw new CoordinateOutOfBoundsError("y", coordinates.y);
-		if(coordinates.z < 0 || coordinates.z >= this.proportions.layers) throw new CoordinateOutOfBoundsError("z", coordinates.z);
-		let room:Room|undefined = this.grid[coordinates.z][coordinates.y][coordinates.x];
-		if(!room) throw new NoRoomError(this, coordinates);
-		return room;
+	getRoom(coordinates:CartesianCoordinates): Room;
+	getRoom(x:number, y:number, z:number): Room;
+	getRoom(coordinates:CartesianCoordinates|number, y?:number, z?:number): Room|undefined{
+		if(typeof coordinates === "number" && y !== undefined && z !== undefined) coordinates = {x:coordinates, y:y, z:z};
+		if(coordinates && coordinates instanceof Object){
+			if(coordinates.x < 0 || coordinates.x >= this.proportions.width) throw new CoordinateOutOfBoundsError("x", coordinates.x);
+			if(coordinates.y < 0 || coordinates.y >= this.proportions.height) throw new CoordinateOutOfBoundsError("y", coordinates.y);
+			if(coordinates.z < 0 || coordinates.z >= this.proportions.layers) throw new CoordinateOutOfBoundsError("z", coordinates.z);
+			let room:Room|undefined = this.grid[coordinates.z][coordinates.y][coordinates.x];
+			if(!room) throw new NoRoomError(this, coordinates);
+			return room;
+		}
 	}
 
 	getStep(coordinates:CartesianCoordinates, direction:Direction): Room{

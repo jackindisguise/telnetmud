@@ -15,5 +15,6 @@
 	"We're shutting down, so beat it.": "We're shutting down, so beat it.",
 	"You turn into a line noise.": "You turn into a line noise.",
 	"%s: %s": "%s: %s",
-	"%s has turned into a line noise.": "%s has turned into a line noise."
+	"%s has turned into a line noise.": "%s has turned into a line noise.",
+	"(Y/n)": "(Y/n)"
 }

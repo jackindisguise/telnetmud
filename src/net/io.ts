@@ -1,8 +1,8 @@
 import { EventEmitter } from "events";
 import * as net from "net";
-import * as color from "./color";
-import * as stringx from "./ext/string";
-import { _ } from "../i18n";
+import * as color from "../color";
+import * as stringx from "../lib/string";
+import { _ } from "../../i18n";
 
 export interface Server{
 	clients: Client[];

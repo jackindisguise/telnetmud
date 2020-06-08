@@ -25,6 +25,7 @@ export function rollString(str:string): number{
 	let die: number = Number(result[1]);
 	let sides: number = Number(result[2]);
 	let mod: number = Number(result[4]);
+	if(!mod) mod = 0;
 	if(result[3]==="-") mod = 0-mod;
-	return roll(die, sides, mod);
+	return rangeInt(die,sides*die)+mod;
 }

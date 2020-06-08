@@ -1,9 +1,10 @@
 import { logger } from "./util/logger";
-import * as io from "./io";
+import * as io from "./net/io";
 import * as database from "./database";
 import * as dungeon from "./dungeon";
 import { HelpFile } from "./help";
 import { _ } from "../i18n";
+import { Handler } from "./command";
 
 export enum MessageCategory {
 	MSG_DEFAULT,
@@ -41,12 +42,7 @@ export class Player{
 
 		if(!this.mob) return;
 		logger.silly(`${this}: '${line}'`);
-		this.sendMessage(_("You: %s", line), MessageCategory.MSG_CHAT);
-		for(let player of MUD.players){
-			if(player === this) continue;
-			player.sendMessage(_("%s: %s", this.mob.name, line), MessageCategory.MSG_CHAT);
-		}
-
+		if(!Handler.parse(this, line)) this.sendMessage("Do what, now?", MessageCategory.MSG_DEFAULT);
 		this.sendPrompt();
 
 		if(line === _("close")){
@@ -61,7 +57,7 @@ export class Player{
 	}
 
 	yesno(question: string, callback: (yes: boolean|undefined) => void){
-		this.ask(question + _(" (Y/n) "), function(response: string){
+		this.ask(`${question} ${_("(Y/n)")} `, function(response: string){
 			if(!response) return callback(undefined);
 			if(_("yes").startsWith(response.toLowerCase())) return callback(true);
 			if(_("no").startsWith(response.toLowerCase())) return callback(false);
