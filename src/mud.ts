@@ -42,7 +42,7 @@ export class Player{
 
 		if(!this.mob) return;
 		logger.silly(`${this}: '${line}'`);
-		if(!Handler.parse(this, line)) this.sendMessage("Do what, now?", MessageCategory.MSG_DEFAULT);
+		if(!Handler.parse(this, line)) this.message(_("Do what, now?"));
 		this.sendPrompt();
 
 		if(line === _("close")){
@@ -76,10 +76,22 @@ export class Player{
 	}
 
 	sendMessage(data: string, msgCategory: MessageCategory, linebreak?:boolean){
-		if(this.msgCategory !== undefined && this.msgCategory !== msgCategory) this.sendLine("!!");
+		if(this.msgCategory !== undefined && this.msgCategory !== msgCategory) this.sendLine("");
 		if(linebreak === undefined || linebreak) this.sendLine(data);
 		else this.send(data);
 		this.msgCategory = msgCategory; // assign new category
+	}
+
+	message(data: string){
+		this.sendMessage(data, MessageCategory.MSG_DEFAULT);
+	}
+
+	chat(data: string){
+		this.sendMessage(data, MessageCategory.MSG_CHAT);
+	}
+
+	info(data: string){
+		this.sendMessage(data, MessageCategory.MSG_INFO);
 	}
 
 	sendPrompt(){
@@ -90,6 +102,7 @@ export class Player{
 export class MUD{
 	static server: io.Server = new io.TelnetServer();
 	static players: Player[] = [];
+	static world: dungeon.Dungeon;
 	static start(port: number){
 		if(MUD.server.isOpen()) throw new Error(_("MUD & server already started."));
 		MUD.server.on("connection", function(client: io.Client){
@@ -170,6 +183,7 @@ export class MUD{
 		function finish(){
 			if(!mob) throw new Error(_("Somehow finished nanny with no mob."));
 			player.mob = mob;
+			mob.move(MUD.world.getRoom(0,0,0));
 			player.sendMessage(_("Welcome to the world, %s!", mob.toString()), MessageCategory.MSG_INFO);
 			player.sendPrompt();
 		};

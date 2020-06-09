@@ -1,4 +1,4 @@
 ---
-regex: (?:o|oo|ooc)\b
+regex: (?:o|oo|ooc)\s*$ # only match o/oo/ooc by itself
 fun: |-2
-  player.sendMessage("What do you want to say?", MessageCategory.DEFAULT);
+  player.message(_("What do you want to say?"));

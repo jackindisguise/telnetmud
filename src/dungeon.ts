@@ -1,4 +1,4 @@
-import { Direction } from "./direction";
+import { Direction, Directions } from "./direction";
 import * as color from "./color";
 
 export type Dimensions = {
@@ -51,6 +51,21 @@ type DungeonOptions = {
 	fill: boolean
 }
 
+type DungeonPrototypeKeys = {
+	[key: string]: DungeonPrototypeKey
+}
+
+type DungeonPrototypeKey = {
+	name: string,
+	description: string
+}
+
+export type DungeonPrototype = {
+	proportions: Dimensions,
+	keys: DungeonPrototypeKeys,
+	grid: any[][][]
+}
+
 export class Dungeon{
 	contents: (Room|DObject)[] = [];
 	grid!: (Room|undefined)[][][];
@@ -97,21 +112,21 @@ export class Dungeon{
 		return room;
 	}
 
-	getRoom(coordinates:CartesianCoordinates): Room;
-	getRoom(x:number, y:number, z:number): Room;
+	getRoom(coordinates:CartesianCoordinates): Room|undefined;
+	getRoom(x:number, y:number, z:number): Room|undefined;
 	getRoom(coordinates:CartesianCoordinates|number, y?:number, z?:number): Room|undefined{
 		if(typeof coordinates === "number" && y !== undefined && z !== undefined) coordinates = {x:coordinates, y:y, z:z};
 		if(coordinates && coordinates instanceof Object){
-			if(coordinates.x < 0 || coordinates.x >= this.proportions.width) throw new CoordinateOutOfBoundsError("x", coordinates.x);
-			if(coordinates.y < 0 || coordinates.y >= this.proportions.height) throw new CoordinateOutOfBoundsError("y", coordinates.y);
-			if(coordinates.z < 0 || coordinates.z >= this.proportions.layers) throw new CoordinateOutOfBoundsError("z", coordinates.z);
+			if(coordinates.x < 0 || coordinates.x >= this.proportions.width) return undefined;
+			if(coordinates.y < 0 || coordinates.y >= this.proportions.height) return undefined;
+			if(coordinates.z < 0 || coordinates.z >= this.proportions.layers) return undefined;
 			let room:Room|undefined = this.grid[coordinates.z][coordinates.y][coordinates.x];
-			if(!room) throw new NoRoomError(this, coordinates);
+			if(!room) return undefined;
 			return room;
 		}
 	}
 
-	getStep(coordinates:CartesianCoordinates, direction:Direction): Room{
+	getStep(coordinates:CartesianCoordinates, direction:Direction): Room|undefined{
 		if(direction&Direction.NORTH) coordinates.y--;
 		else if(direction&Direction.SOUTH) coordinates.y++;
 		if(direction&Direction.EAST) coordinates.x++;
@@ -162,6 +177,17 @@ export class Room{
 		return this._coordinates.z;
 	}
 
+	exits(): Direction[]{
+		let exits: Direction[] = [];
+		for(let exit of Directions){
+			if(this.getStep(exit)){
+				exits.push(exit);
+			}
+		}
+
+		return exits;
+	}
+
 	add(occupier:DObject): void{
 		if(this.contents.indexOf(occupier) != -1) return;
 		this.contents.push(occupier);
@@ -189,7 +215,7 @@ export class Room{
 		return true;
 	}
 
-	getStep(direction:Direction): Room{
+	getStep(direction:Direction): Room|undefined{
 		return this.dungeon.getStep(this.coordinates, direction);
 	}
 }
@@ -296,20 +322,22 @@ export class Movable extends DObject{
 		return true;
 	}
 
-	getStep(direction:Direction): Room{
+	getStep(direction:Direction): Room|undefined{
 		if(!this.location) throw new Error("Trying to step with no location.");
-		if(!(this.location instanceof Room)) throw new Error("Trying to step while not in a room."); 
+		if(!(this.location instanceof Room)) throw new Error("Trying to step while not in a room.");
 		return this.location.getStep(direction);
 	}
 
 	canStep(direction:Direction): boolean{
-		let room:Room = this.getStep(direction);
+		let room:Room|undefined = this.getStep(direction);
+		if(!room) return false;
 		return this.canMove(room);
 	}
 
 	step(direction:Direction): boolean{
 		if(!this.canStep(direction)) return false;
-		let room:Room = this.getStep(direction);
+		let room:Room|undefined = this.getStep(direction);
+		if(!room) return false;
 		return this.move(room);
 	}
 }

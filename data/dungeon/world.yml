@@ -1,0 +1,27 @@
+---
+proportions:
+  width: 11
+  height: 11
+  layers: 1
+keys:
+  a:
+    name: An empty field.
+    description: It's an empty field.
+  b:
+    name: The center.
+    description: This is the center of the field.
+grid: [ 
+  [
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","b","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"],
+    ["a","a","a","a","a","a","a","a","a","a","a"]
+  ]
+]

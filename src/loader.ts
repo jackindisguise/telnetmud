@@ -4,6 +4,8 @@ import * as yaml from "yaml";
 import * as database from "./database";
 import * as command from "./command";
 import * as help from "./help";
+import * as mud from "./mud";
+import { Dungeon, DungeonPrototype, Room } from "./dungeon";
 
 function loadGameFile(done: Function){
 	fs.readFile(database.gameFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
@@ -50,7 +52,7 @@ function loadCommands(done: Function){
 				let yml = yaml.parse(data);
 				if(yml && yml.regex && yml.fun) {
 					let script: vm.Script = new vm.Script(yml.fun);
-					let nCommand = new command.Command(new RegExp(yml.regex), script);
+					let nCommand = new command.Command(new RegExp(yml.regex, "i"), script);
 					command.Handler.add(nCommand);
 				}
 
@@ -61,7 +63,33 @@ function loadCommands(done: Function){
 	});
 }
 
-const loaders: Function[] = [loadGameFile, loadServerFile, loadHelpFiles, loadCommands];
+function loadWorldDungeon(done: Function){
+	fs.readFile(database.worldDungeonFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
+		let yml: DungeonPrototype = yaml.parse(data);
+		if(yml.proportions){
+			let dungeon: Dungeon = new Dungeon({proportions:yml.proportions, fill:false});
+			for(let z=0;z<yml.grid.length;z++){
+				let layer = yml.grid[z];
+				for(let y=0;y<layer.length;y++){
+					let row = layer[y];
+					for(let x=0;x<row.length;x++){
+						let key = row[x];
+						if(!yml.keys.hasOwnProperty(key)) continue;
+						let keyData = yml.keys[key];
+						let room: Room = dungeon.createRoom({x:x,y:y,z:z})
+						room.name = keyData.name;
+						room.description = keyData.description;
+					}
+				}
+			}
+
+			mud.MUD.world = dungeon;
+		}
+		done();
+	});
+}
+
+const loaders: Function[] = [loadGameFile, loadServerFile, loadHelpFiles, loadCommands, loadWorldDungeon];
 export function load(done: Function){
 	function next(){
 		let loader: Function|undefined = loaders.shift();

@@ -45,7 +45,7 @@ describe("dungeon", function(){
 	});
 
 	it("Create a mob with an initial location.", function(done){
-		let room = d.getRoom({x:0,y:0,z:0});
+		let room = <dungeon.Room>d.getRoom({x:0,y:0,z:0});
 		let m2 = new dungeon.Mob({location:room});
 		expect(m2.location).is.equal(room);
 		expect(room.contains(m2)).is.true;
@@ -53,7 +53,7 @@ describe("dungeon", function(){
 	});
 
 	it("Move mob to dungeon.", function(done){
-		let room = d.getRoom({x:0,y:0,z:0});
+		let room = <dungeon.Room>d.getRoom({x:0,y:0,z:0});
 		m.move(room);
 		expect(m.location).equal(room);
 		expect(m.location).not.equal(undefined);
@@ -64,7 +64,7 @@ describe("dungeon", function(){
 
 	it("Testing redundant add/remove of Room contents.", function(done){
 		// redundant add/remove movement
-		let room = d.getRoom({x:0,y:0,z:0});
+		let room = <dungeon.Room>d.getRoom({x:0,y:0,z:0});
 		expect(m.location).is.equal(room);
 		expect(room.contains(m)).is.true;
 		room.add(m);
@@ -78,7 +78,7 @@ describe("dungeon", function(){
 		expect(room.contains(m)).is.false;
 
 		// moving to a new room
-		let room2 = d.getRoom({x:1,y:1,z:0});
+		let room2 = <dungeon.Room>d.getRoom({x:1,y:1,z:0});
 		room2.add(m);
 		expect(m.location).is.equal(room2);
 		expect(room.contains(m)).is.false;
@@ -128,13 +128,13 @@ describe("dungeon", function(){
 	});
 
 	it("Take a step in each direction.", function(done){
-		let original = d.getRoom({x:0,y:0,z:0});
+		let original = <dungeon.Room>d.getRoom({x:0,y:0,z:0});
 		expect(m.location).is.equal(original);
 		expect(m.x).is.equal(0);
 		expect(m.y).is.equal(0);
 		expect(m.z).is.equal(0);
 
-		let up = d.getRoom({x:0,y:0,z:1});
+		let up = <dungeon.Room>d.getRoom({x:0,y:0,z:1});
 		expect(m.step(Direction.UP)).is.true;
 		expect(up.contains(m)).is.true;
 		expect(m.location).is.equal(up);
@@ -149,21 +149,21 @@ describe("dungeon", function(){
 		expect(m.y).is.equal(0);
 		expect(m.z).is.equal(0);
 
-		let room2 = d.getRoom({x:1,y:0,z:0});
+		let room2 = <dungeon.Room>d.getRoom({x:1,y:0,z:0});
 		m.step(Direction.EAST);
 		expect(m.location).not.equal(original);
 		expect(original.contains(m)).equal(false);
 		expect(m.location).equal(room2);
 		expect(room2.contains(m)).equal(true);
 
-		let room3 = d.getRoom({x:1,y:1,z:0});
+		let room3 = <dungeon.Room>d.getRoom({x:1,y:1,z:0});
 		m.step(Direction.SOUTH);
 		expect(m.location).not.equal(room2);
 		expect(room2.contains(m)).equal(false);
 		expect(m.location).equal(room3);
 		expect(room3.contains(m)).equal(true);
 
-		let room4 = d.getRoom({x:0,y:1,z:0});
+		let room4 = <dungeon.Room>d.getRoom({x:0,y:1,z:0});
 		m.step(Direction.WEST);
 		expect(m.location).not.equal(room3);
 		expect(room3.contains(m)).equal(false);
@@ -180,7 +180,7 @@ describe("dungeon", function(){
 	});
 
 	it("Move mob off dungeon.", function(done){
-		let room = d.getRoom({x:0,y:0,z:0});
+		let room = <dungeon.Room>d.getRoom({x:0,y:0,z:0});
 		m.move(undefined);
 		expect(m.location).equal(undefined);
 		expect(m.location).not.equal(room);
@@ -204,7 +204,7 @@ describe("dungeon", function(){
 	});
 
 	it("Testing redundant adding/removing of DObject contents.", function(done){
-		let room = d.getRoom({x:0,y:0,z:0});
+		let room = <dungeon.Room>d.getRoom({x:0,y:0,z:0});
 		expect(d.contains(room)).is.true;
 		d.add(room);
 		expect(d.contains(room)).is.true;
@@ -309,9 +309,9 @@ describe("dungeon", function(){
 
 	it("Change from one dungeon to another.", function(done){
 		let d1 = new dungeon.Dungeon({proportions:{width:10,height:10,layers:10}, fill:true});
-		let r1 = d1.getRoom(0,0,0);
+		let r1 = <dungeon.Room>d1.getRoom(0,0,0);
 		let d2 = new dungeon.Dungeon({proportions:{width:10,height:10,layers:10}, fill:true});
-		let r2 = d2.getRoom(0,0,0);
+		let r2 = <dungeon.Room>d2.getRoom(0,0,0);
 		let m = new dungeon.Mob();
 
 		// move to d1

@@ -16,5 +16,8 @@
 	"You turn into a line noise.": "You turn into a line noise.",
 	"%s: %s": "%s: %s",
 	"%s has turned into a line noise.": "%s has turned into a line noise.",
-	"(Y/n)": "(Y/n)"
+	"(Y/n)": "(Y/n)",
+	"Do what, now?": "Do what, now?",
+	"[Exits: %s]": "[Exits: %s]",
+	"What do you want to say?": "What do you want to say?"
 }

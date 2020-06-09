@@ -1,0 +1,5 @@
+---
+regex: (?:s|so|sou|sout|south)\s*$
+fun: |-2
+  player.mob.step(direction.Direction.SOUTH);
+  player.command("look");

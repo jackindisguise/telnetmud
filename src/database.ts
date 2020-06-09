@@ -1,13 +1,15 @@
 import * as fs from "fs";
+import * as stringx from "./lib/string";
 import * as help from "./help";
 import * as command from "./command";
-import * as stringx from "./lib/string";
+import * as dungeon from "./dungeon";
 
 // file names
 export const commandFilePath: string = "./data/command/";
 export const helpFilePath: string = "./data/help/";
 export const gameFilePath: string = "./data/game.yml";
 export const serverFilePath: string = "./data/server.yml";
+export const worldDungeonFilePath: string = "./data/dungeon/world.yml";
 
 // data structures
 export const helpfiles: help.HelpFile[] = [];

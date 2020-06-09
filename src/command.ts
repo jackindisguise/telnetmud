@@ -1,9 +1,24 @@
 import * as mud from "./mud";
 import * as vm from "vm";
+import { _ } from "../i18n";
+import * as dungeon from "./dungeon";
+import * as direction from "./direction";
 
 export const safeEnvironment = {
-	MUD: mud.MUD,
-	console: {log:console.log},
+	// standard Node globals
+	console: {
+		log:console.log
+	},
+
+	// shorthand accessors
+	players: mud.MUD.players,
+
+	// modules
+	dungeon: dungeon,
+	direction: direction,
+	_: _,
+
+	// data structures
 	MessageCategory: mud.MessageCategory
 };
 
