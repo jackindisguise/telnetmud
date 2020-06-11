@@ -13,6 +13,7 @@ export const worldDungeonFilePath: string = "./data/dungeon/world.yml";
 
 // data structures
 export const helpfiles: help.HelpFile[] = [];
+export const commands: command.Command[] = [];
 
 // config files
 export namespace config {
@@ -35,5 +36,11 @@ export function getHelpFileByKeyword(keywords: string): help.HelpFile|undefined{
 export function addHelpFile(...files: help.HelpFile[]){
 	for(let file of files){
 		helpfiles.push(file);
+	}
+}
+
+export function addCommand(..._commands: command.Command[]){
+	for(let command of _commands){
+		commands.push(command);
 	}
 }

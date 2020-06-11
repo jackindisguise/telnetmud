@@ -3,6 +3,7 @@ import * as vm from "vm";
 import { _ } from "../i18n";
 import * as dungeon from "./dungeon";
 import * as direction from "./direction";
+import * as database from "./database";
 
 export const safeEnvironment = {
 	// standard Node globals
@@ -11,7 +12,7 @@ export const safeEnvironment = {
 	},
 
 	// shorthand accessors
-	players: mud.MUD.players,
+	MUD: mud.MUD,
 
 	// modules
 	dungeon: dungeon,
@@ -19,32 +20,20 @@ export const safeEnvironment = {
 	_: _,
 
 	// data structures
-	MessageCategory: mud.MessageCategory
+	MessageCategory: mud.MessageCategory,
+
+	// classes
+	Room: dungeon.Room,
+	DObject: dungeon.DObject
 };
 
 export class Handler{
-	static commands: Command[] = [];
-	static add(...commands: Command[]){
-		for(let command of commands){
-			if(Handler.commands.indexOf(command) !== -1) continue;
-			Handler.commands.push(command);
-		}
-	}
-
-	static remove(...commands: Command[]){
-		for(let command of commands){
-			let pos: number = Handler.commands.indexOf(command);
-			if(pos === -1) continue;
-			Handler.commands.splice(pos,1);
-		}
-	}
-
 	static parse(player: mud.Player, input: string): boolean{
-		for(let command of Handler.commands){
+		for(let command of database.commands){
 			let result = input.match(command.regex);
 			if(!result) continue;
-			let args = result.slice();
-			args.shift();
+			let args = result.slice(); // only take array elements of results
+			args.shift(); // drop the first element (the entire string)
 			command.script.runInContext(vm.createContext({...safeEnvironment, player: player, arguments:args}));
 			return true;
 		}
@@ -56,9 +45,11 @@ export class Handler{
 export class Command{
 	regex: RegExp;
 	script: vm.Script;
-	constructor(regex: RegExp, script: vm.Script){
+	params: string|undefined;
+	constructor(regex: RegExp, script: vm.Script, params?: string){
 		this.regex = regex;
 		this.script = script;
+		if(params) this.params = params;
 	}
 
 	run(player: mud.Player, ...args: any[]){

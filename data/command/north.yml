@@ -1,5 +1,10 @@
 ---
-regex: (?:n|no|nor|nort|north)\s*$
-fun: |-2
-  player.mob.step(direction.Direction.NORTH);
-  player.command("look");
+regex: ^(?:n|no|nor|nort|north)\s*$
+fun: |-
+  let dir = direction.Direction.NORTH;
+  if(!player.mob.canStep(dir)) {
+    player.message("Alas, you cannot go that way.");
+  } else {
+    player.mob.step(dir);
+    player.showRoom();
+  }

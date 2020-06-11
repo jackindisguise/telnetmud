@@ -1,5 +1,6 @@
 import { Direction, Directions } from "./direction";
 import * as color from "./color";
+import { count } from "console";
 
 export type Dimensions = {
 	width: number,
@@ -124,6 +125,21 @@ export class Dungeon{
 			if(!room) return undefined;
 			return room;
 		}
+	}
+
+	getArea(coordinates:CartesianCoordinates, size:number){
+		let area: (Room|undefined)[][] = [];
+		for(let y=coordinates.y-size;y<=coordinates.y+size;y++){
+			let row: (Room|undefined)[] = [];
+			for(let x=coordinates.x-size;x<=coordinates.x+size;x++){
+				let room: Room|undefined = this.getRoom({x:x,y:y,z:coordinates.z});
+				row.push(room);
+			}
+
+			area.push(row);
+		}
+
+		return area;
 	}
 
 	getStep(coordinates:CartesianCoordinates, direction:Direction): Room|undefined{

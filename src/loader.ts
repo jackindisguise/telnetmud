@@ -6,9 +6,11 @@ import * as command from "./command";
 import * as help from "./help";
 import * as mud from "./mud";
 import { Dungeon, DungeonPrototype, Room } from "./dungeon";
+import { logger } from "./util/logger";
 
 function loadGameFile(done: Function){
 	fs.readFile(database.gameFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
+		logger.debug("Loading game config file.");
 		let yml = yaml.parse(data);
 		if(yml.name) database.config.game.name = yml.name;
 		if(yml.version) database.config.game.version = yml.version;
@@ -18,6 +20,7 @@ function loadGameFile(done: Function){
 
 function loadServerFile(done: Function){
 	fs.readFile(database.serverFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
+		logger.debug("Loading server config file.");
 		let yml = yaml.parse(data);
 		if(yml.port) database.config.server.port = yml.port;
 		done();
@@ -27,11 +30,13 @@ function loadServerFile(done: Function){
 function loadHelpFiles(done: Function){
 	fs.readdir(database.helpFilePath, function(err: NodeJS.ErrnoException | null, files: string[]){
 		let c = files.length;
+		logger.debug("Loading helpfiles...")
 		for(let file of files){
 			let path = database.helpFilePath + file;
 			fs.readFile(path, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
 				let yml = yaml.parse(data);
 				if(yml && yml.keywords && yml.body) {
+					logger.debug(`Loading helpfile '${path}'`);
 					let helpFile = new help.HelpFile({keywords:yml.keywords, body:yml.body});
 					database.addHelpFile(helpFile);
 				}
@@ -46,14 +51,17 @@ function loadHelpFiles(done: Function){
 function loadCommands(done: Function){
 	fs.readdir(database.commandFilePath, function(err: NodeJS.ErrnoException | null, files: string[]){
 		let c = files.length;
+		logger.debug("Loading commands...")
 		for(let file of files){
 			let path = database.commandFilePath + file;
 			fs.readFile(path, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
 				let yml = yaml.parse(data);
 				if(yml && yml.regex && yml.fun) {
+					logger.debug(`Loading command '${path}'`);
 					let script: vm.Script = new vm.Script(yml.fun);
 					let nCommand = new command.Command(new RegExp(yml.regex, "i"), script);
-					command.Handler.add(nCommand);
+					if(yml.params) nCommand.params = yml.params;
+					database.addCommand(nCommand);
 				}
 
 				c--;
@@ -84,6 +92,7 @@ function loadWorldDungeon(done: Function){
 			}
 
 			mud.MUD.world = dungeon;
+			logger.debug("Loaded world dungeon.");
 		}
 		done();
 	});

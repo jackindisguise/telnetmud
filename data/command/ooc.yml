@@ -1,7 +1,8 @@
 ---
-regex: (?:o|oo|ooc) (.+)
-fun: |-2
-  for(let target of players){
+regex: ^(?:o|oo|ooc) (.+)
+params: message:text
+fun: |-
+  for(let target of MUD.players){
     if(target === player) target.chat(_("You: %s", arguments[0]));
     else target.chat(_("%s: %s", player.mob.name, arguments[0]));
   }

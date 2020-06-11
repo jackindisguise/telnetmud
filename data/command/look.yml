@@ -1,33 +1,4 @@
 ---
-regex: (?:l|lo|loo|look)\s*$
-fun: |-2
-  let room = player.mob.location;
-  if(room instanceof dungeon.DObject) {
-    player.message(_("Why are you in another object?"));
-  } else if(room instanceof dungeon.Room){
-    let display = `${room.name}\r\n ${room.description}\r\n\r\n`;
-    let exits = room.exits();
-    let text = [];
-    for(let dir of exits) text.push(direction.Direction2Word.get(dir));
-    display += _("[Exits: %s]", text.join(" "));
-    player.info(display);
-
-    // make a map
-    let dungeon = player.mob.location.dungeon;
-    let lines = [];
-    for(let y=player.mob.y-3;y<=player.mob.y+3;y++){
-      let line = [];
-      for(let x=player.mob.x-3;x<=player.mob.x+3;x++){
-        let room = dungeon.getRoom(x,y,player.mob.z);
-        if(x===player.mob.x && y===player.mob.y) line.push("@");
-        else if(room) line.push("*");
-        else line.push(" ");
-      }
-  
-      lines.push(line.join(" "));
-    }
-
-    player.info(lines.join("\r\n"));
-  } else {
-    player.info(_("Where the fuck are you?"));
-  }
+regex: ^(?:l|lo|loo|look)\s*$
+fun: |-
+  player.showRoom();

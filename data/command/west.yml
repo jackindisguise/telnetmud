@@ -1,5 +1,10 @@
 ---
-regex: (?:w|we|wes|west)\s*$
-fun: |-2
-  player.mob.step(direction.Direction.WEST);
-  player.command("look");
+regex: ^(?:w|we|wes|west)\s*$
+fun: |-
+  let dir = direction.Direction.WEST;
+  if(!player.mob.canStep(dir)) {
+    player.message("Alas, you cannot go that way.");
+  } else {
+    player.mob.step(dir);
+    player.showRoom();
+  }

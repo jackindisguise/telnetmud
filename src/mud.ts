@@ -2,6 +2,7 @@ import { logger } from "./util/logger";
 import * as io from "./net/io";
 import * as database from "./database";
 import * as dungeon from "./dungeon";
+import * as direction from "./direction";
 import { HelpFile } from "./help";
 import { _ } from "../i18n";
 import { Handler } from "./command";
@@ -47,6 +48,7 @@ export class Player{
 
 		if(line === _("close")){
 			MUD.shutdown();
+			return;
 		}
 	}
 
@@ -96,6 +98,47 @@ export class Player{
 
 	sendPrompt(){
 		this.sendMessage("{R>{x ", MessageCategory.MSG_PROMPT, false);
+	}
+
+	showRoom(){
+		if(!this.mob) return;
+		if(this.mob.location instanceof dungeon.DObject) {
+			this.message(_("Why are you in another object?"));
+			return;
+		}
+
+		if(!(this.mob.location instanceof dungeon.Room)){
+			this.info(_("Where the fuck are you?"));
+			return;
+		}
+
+		let room: dungeon.Room = this.mob.location;
+		let display = `${room.name}\r\n ${room.description}\r\n\r\n`;
+		let exits = room.exits();
+		let text = [];
+		for(let dir of exits) text.push(direction.Direction2Word.get(dir));
+		display += _("[Exits: %s]", text.join(" "));
+		this.info(display);
+	
+		// make a map
+		let size = 3;
+		let lines = ["-".repeat(size*2+3)];
+		let area = room.dungeon.getArea(room.coordinates, size);
+		for(let y=0;y<size*2+1;y++){
+			let line = ["|"];
+			for(let x=0;x<size*2+1;x++){
+				let room = area[y][x];
+				if(x===size && y===size) line.push("@");
+				else if(room) line.push("*");
+				else line.push(" ");
+			}
+
+			line.push("|");
+			lines.push(line.join(""));
+		}
+	
+		lines.push("-".repeat(size*2+3));
+		this.info(lines.join("\r\n"));
 	}
 }
 
