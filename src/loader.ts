@@ -85,8 +85,9 @@ function loadWorldDungeon(done: Function){
 						if(!yml.keys.hasOwnProperty(key)) continue;
 						let keyData = yml.keys[key];
 						let room: Room = dungeon.createRoom({x:x,y:y,z:z})
-						room.name = keyData.name;
-						room.description = keyData.description;
+						if(keyData.name) room.name = keyData.name;
+						if(keyData.description) room.description = keyData.description;
+						if(keyData.mapText) room.mapText = keyData.mapText;
 					}
 				}
 			}

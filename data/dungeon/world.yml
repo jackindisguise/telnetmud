@@ -7,9 +7,11 @@ keys:
   a:
     name: An empty field.
     description: It's an empty field.
+    mapText: ","
   b:
     name: The center.
     description: This is the center of the field.
+    mapText: "+"
 grid: [ 
   [
     ["a","a","a","a","a","a","a","a","a","a","a"],

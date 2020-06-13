@@ -52,18 +52,19 @@ type DungeonOptions = {
 	fill: boolean
 }
 
-type DungeonPrototypeKeys = {
-	[key: string]: DungeonPrototypeKey
+type RoomPrototypeKeys = {
+	[key: string]: RoomPrototypeKey
 }
 
-type DungeonPrototypeKey = {
+type RoomPrototypeKey = {
 	name: string,
-	description: string
+	description: string,
+	mapText: string
 }
 
 export type DungeonPrototype = {
 	proportions: Dimensions,
-	keys: DungeonPrototypeKeys,
+	keys: RoomPrototypeKeys,
 	grid: any[][][]
 }
 
@@ -161,6 +162,7 @@ type RoomOptions = {
 export class Room{
 	name: string = "a room";
 	description: string = "It's a room.";
+	mapText = ".";
 	private _dungeon: Dungeon;
 	private _coordinates: CartesianCoordinates;
 	private _contents: DObject[] = [];
@@ -207,7 +209,7 @@ export class Room{
 	add(occupier:DObject): void{
 		if(this.contents.indexOf(occupier) != -1) return;
 		this.contents.push(occupier);
-		if(occupier.location != this) occupier.location = this;
+		if(occupier.location !== this) occupier.location = this;
 		this.dungeon.add(occupier);
 	}
 
@@ -216,7 +218,7 @@ export class Room{
 		if(i == -1) return;
 		this.contents.splice(i, 1);
 		this.dungeon.remove(occupier);
-		if(occupier.location == this) occupier.location = undefined;
+		if(occupier.location === this) occupier.location = undefined;
 	}
 
 	contains(occupier:DObject): boolean{
@@ -243,6 +245,7 @@ type DObjectOptions = {
 export class DObject{
 	keywords: string = "dobject";
 	display: string = "DObject";
+	mapText: string = "O";
 	private _location: Room|DObject|undefined;
 	private _contents: DObject[] = [];
 	constructor(options?:DObjectOptions){
@@ -359,6 +362,7 @@ export class Movable extends DObject{
 }
 
 export class Mob extends Movable{
+	mapText: string = "!";
 	health: number = 100;
 	mana: number = 100;
 	energy: number = 100;

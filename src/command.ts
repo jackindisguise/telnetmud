@@ -4,6 +4,7 @@ import { _ } from "../i18n";
 import * as dungeon from "./dungeon";
 import * as direction from "./direction";
 import * as database from "./database";
+import { MessageCategory, Player } from "./player";
 
 export const safeEnvironment = {
 	// standard Node globals
@@ -20,7 +21,7 @@ export const safeEnvironment = {
 	_: _,
 
 	// data structures
-	MessageCategory: mud.MessageCategory,
+	MessageCategory: MessageCategory,
 
 	// classes
 	Room: dungeon.Room,
@@ -28,7 +29,7 @@ export const safeEnvironment = {
 };
 
 export class Handler{
-	static parse(player: mud.Player, input: string): boolean{
+	static parse(player: Player, input: string): boolean{
 		for(let command of database.commands){
 			let result = input.match(command.regex);
 			if(!result) continue;
@@ -52,7 +53,7 @@ export class Command{
 		if(params) this.params = params;
 	}
 
-	run(player: mud.Player, ...args: any[]){
+	run(player: Player, ...args: any[]){
 		if(this.script) this.script.runInContext({MUD:mud.MUD, arguments:args});
 		console.log("Bad command.");
 	};
