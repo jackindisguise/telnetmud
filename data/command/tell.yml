@@ -1,0 +1,6 @@
+---
+regex: ^(?:t|te|tel|tell) (.*?) (.+)
+params: "target: mob in players; message:string"
+fun: |-
+  target.chat(_("You: %s", message));
+  

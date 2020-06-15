@@ -1,0 +1,31 @@
+get 1 from 2:
+	item:object in container; container:object in inventory
+
+command param parsing:
+	first:
+		item:object in container
+		container is name of other param
+		wait for container to be found
+	second:
+		container:object in inventory
+		find object in inventory
+		assign to param "container"
+		process arguments waiting for "container" name
+	third:
+		item:object in container
+		find object in result of container
+	done
+
+put 1 in 2:
+	item:object in inventory; container:object in inventory
+
+command param parsing:
+	first:
+		item: object in inventory
+		find object in inventory
+		assign to param "item"
+	second:
+		container: object in inventory
+		find object in inventory
+		assign to param "container"
+	done

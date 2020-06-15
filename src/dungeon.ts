@@ -1,5 +1,6 @@
 import { Direction, Directions } from "./direction";
 import * as color from "./color";
+import * as player from "./player";
 import { count } from "console";
 
 export type Dimensions = {
@@ -362,6 +363,7 @@ export class Movable extends DObject{
 }
 
 export class Mob extends Movable{
+	player: player.Player|undefined;
 	mapText: string = "!";
 	health: number = 100;
 	mana: number = 100;
