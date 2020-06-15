@@ -116,7 +116,7 @@ export class Command{
 	}
 
 	process(player: Player, input: string[]): CommandParams{
-		let results = [];
+		let results: any[] = [];
 		let params: CommandParams = {input: input, etc: results};
 		if(this._params){
 			for(let i=0;i<this._params.length && i<input.length;i++){
