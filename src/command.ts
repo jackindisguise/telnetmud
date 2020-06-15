@@ -56,7 +56,7 @@ export type Param = {
 
 // this is the object that's sent to the command's execution environment
 export type CommandParams = {
-	input: string[],
+	text: string[],
 	etc: any[],
 	[key:string]: any
 }
@@ -116,29 +116,30 @@ export class Command{
 	}
 
 	process(player: Player, input: string[]): CommandParams{
-		let results: any[] = [];
-		let params: CommandParams = {input: input, etc: results};
+		let params: CommandParams = {text: input, etc: []};
 		if(this._params){
-			for(let i=0;i<this._params.length && i<input.length;i++){
-				let param: Param = this._params[i];
-				let text = input[i];
+			for(let param of this._params){
+				let paramInput = input.shift();
 				let value = undefined;
+				if(paramInput === undefined || paramInput === null) break;
 				if(param.type && param.location){
 					let _type = Command.getTypeByWord(param.type);
 					let location = Command.getListByWord(player, param.location);
-					let result = stringx.searchList(text, location, function(needle: string, target:dungeon.DObject){
+					let result = stringx.searchList(paramInput, location, function(needle: string, target:dungeon.DObject){
 						if(!(target instanceof _type)) return false;
 						if(stringx.compareKeywords(needle, target.keywords)) return true;
 						return false
 					});
 
+					if(param.name) params[param.name] = result;
 					value = result;
 				} else if(param.type) {
 					if(param.type === "string") value = paramInput; // use the string
 					else if(param.type === "number") value = Number(paramInput); // make it a number
+					if(param.name) params[param.name] = value; // assign to named value
 				}
 
-				results.push(value);
+				params.etc.push(value);
 			}
 		}
 
