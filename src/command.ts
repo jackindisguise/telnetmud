@@ -7,6 +7,11 @@ import * as database from "./database";
 import { MessageCategory, Player } from "./player";
 import * as stringx from "./lib/string";
 
+/**
+ * I hate all this shit.
+ * Completely refactor some day.
+ */
+
 export const safeEnvironment = {
 	// standard Node globals
 	console: {

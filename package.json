@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha -r ts-node/register --file setup.spec.ts src/**/*.spec.ts",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
-    "make": "tsc"
+	"make": "tsc",
+	"doc": "typedoc"
   },
   "author": "",
   "license": "ISC",
@@ -38,6 +39,7 @@
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "chai": "^4.2.0",
-    "mocha": "^7.1.2"
+    "mocha": "^7.1.2",
+    "typedoc": "^0.17.7"
   }
 }
