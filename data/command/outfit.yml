@@ -1,0 +1,12 @@
+---
+regex: ^(?:out|outfit)\s*$
+fun: |-
+  let sword = new DObject();
+  sword.display = "a longsword";
+  sword.keywords = "longsword";
+  let container = new DObject();
+  container.display = "belt of infinite space";
+  container.keywords = "belt infinite space";
+  container.add(sword);
+  player.mob.add(container);
+  player.message(_("You are equipped by the gods."));

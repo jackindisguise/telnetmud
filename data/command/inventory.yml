@@ -1,0 +1,7 @@
+---
+regex: ^(?:i|in|inv|inventory)\s*$
+fun: |-
+  let list = [_("You are carrying...")];
+  if(player.mob.contents.length === 0) list.push("Nothing...");
+  for(let obj of player.mob.contents) list.push(obj.display)
+  player.info(list.join("\r\n  "));

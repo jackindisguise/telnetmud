@@ -20,5 +20,13 @@
 	"Do what, now?": "Do what, now?",
 	"[Exits: %s]": "[Exits: %s]",
 	"What do you want to say?": "What do you want to say?",
-	"telnetMUD v%s": "telnetMUD v%s"
+	"telnetMUD v%s": "telnetMUD v%s",
+	"You tell %s: %s": "You tell %s: %s",
+	"%s tells you: %s": "%s tells you: %s",
+	"You can't send a message to yourself, fool.": "You can't send a message to yourself, fool.",
+	"You are carrying...": "You are carrying...",
+	"%s is holding...": "%s is holding...",
+	"There isn't anything like that inside %s.": "There isn't anything like that inside %s.",
+	"You get %s out from %s.": "You get %s out from %s.",
+	"You are equipped by the gods.": "You are equipped by the gods."
 }

@@ -1,6 +1,10 @@
 ---
 regex: ^(?:t|te|tel|tell) (.*?) (.+)
-params: "target: mob in players; message:string"
+params: "target:player in players; message:string"
 fun: |-
-  target.chat(_("You: %s", message));
-  
+  if(player === target) {
+    player.chat(_("You can't send a message to yourself, fool."));
+  } else {
+    player.chat(_("You tell %s: %s", target.mob.name, message));
+    target.chat(_("%s tells you: %s", player.mob.name, message));
+  }

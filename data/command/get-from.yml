@@ -1,0 +1,12 @@
+---
+regex: ^(?:g|ge|get) (.*?) from (.+)$
+params: "item:obj in container; container:obj in inventory"
+fun: |-
+  if(!container){
+    player.message(_("You aren't carrying anything like that."));
+  } else if(!item){
+    player.message(_("There isn't anything like that inside %s.", container.display));
+  } else {
+    player.mob.add(item);
+    player.message(_("You get %s out from %s.", item.display, container.display));
+  }
