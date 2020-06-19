@@ -19,5 +19,6 @@
 	"(Y/n)": "(Y/n)",
 	"Do what, now?": "Do what, now?",
 	"[Exits: %s]": "[Exits: %s]",
-	"What do you want to say?": "What do you want to say?"
+	"What do you want to say?": "What do you want to say?",
+	"telnetMUD v%s": "telnetMUD v%s"
 }
