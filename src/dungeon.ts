@@ -1,7 +1,6 @@
 import { Direction, Directions } from "./direction";
 import * as color from "./color";
 import * as player from "./player";
-import { count } from "console";
 
 export type Dimensions = {
 	width: number,
@@ -385,7 +384,7 @@ export class Mob extends Movable{
 		if(this.player) this.player.sendLine(data, colorize);
 	}
 
-	sendMessage(data: string, msgCategory: MessageCategory, linebreak?:boolean){
+	sendMessage(data: string, msgCategory: player.MessageCategory, linebreak?:boolean){
 		if(this.player) this.player.sendMessage(data, msgCategory, linebreak);
 	}
 
