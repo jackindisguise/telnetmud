@@ -6,9 +6,7 @@ import * as stringx from "./lib/string";
 import { Player, MessageCategory } from "./player";
 import { HelpFile } from "./help";
 import { _ } from "../i18n";
-
-// load package
-const __VERSION__ = require("../../package.json").version;
+import { __VERSION__ } from "../package";
 
 export class MUD{
 	static server: io.Server = new io.TelnetServer();
