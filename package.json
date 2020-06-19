@@ -1,14 +1,14 @@
 {
   "name": "telnetmud",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha -r ts-node/register --file setup.spec.ts src/**/*.spec.ts",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
-	"make": "tsc",
-	"doc": "typedoc",
-	"release": "npm run coverage && npm run make && standard-version && npm run doc"
+    "make": "tsc",
+    "doc": "typedoc",
+    "release": "npm run coverage && npm run make && standard-version && npm run doc"
   },
   "author": "",
   "license": "ISC",
