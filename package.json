@@ -8,10 +8,7 @@
     "coverage": "nyc --reporter=html --reporter=text npm run test",
 	"make": "tsc",
 	"doc": "typedoc",
-	"change": "git log v%npm_package_version%..@ > changes/changes.txt",
-	"preversion": "npm test",
-	"version": "npm run make",
-	"postversion": "npm run coverage && npm run doc && git add -A . && git push && git push --tags"
+	"release": "npm run coverage && npm run make && standard-version && npm run doc"
   },
   "author": "",
   "license": "ISC",
