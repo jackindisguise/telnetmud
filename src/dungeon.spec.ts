@@ -217,40 +217,16 @@ describe("dungeon", function(){
 
 	it("Testing Dungeon dimension limits.", function(done){
 		// out of bounds
-		let error: Error|undefined;
-		try{
-			d.getRoom({x:-1,y:0,z:0});
-		} catch(e){
-			error = e;
-		}
-
-		expect(error).is.not.undefined;
-		expect(error instanceof dungeon.CoordinateOutOfBoundsError).is.true;
+		expect(d.getRoom({x:-1,y:0,z:0})).is.undefined;
 
 		// out of bounds 2
-		error = undefined;
-		try{
-			d.getRoom({x:0,y:-1,z:0});
-		} catch(e){
-			error = e;
-		}
+		expect(d.getRoom({x:0,y:-1,z:0})).is.undefined;
 
-		expect(error).is.not.undefined;
-		expect(error instanceof dungeon.CoordinateOutOfBoundsError).is.true;
-		
 		// out of bounds 3
-		error = undefined;
-		try{
-			d.getRoom({x:0,y:0,z:-1});
-		} catch(e){
-			error = e;
-		}
-
-		expect(error).is.not.undefined;
-		expect(error instanceof dungeon.CoordinateOutOfBoundsError).is.true;
+		expect(d.getRoom({x:0,y:0,z:-1})).is.undefined;
 		
 		// out of bounds 4
-		error = undefined;
+		let error = undefined;
 		try{
 			d.createRoom({x:-1,y:0,z:0});
 		} catch(e){
@@ -295,15 +271,7 @@ describe("dungeon", function(){
 
 		// no room at location
 		let empty = new dungeon.Dungeon({proportions:{width:10,height:10,layers:1}, fill:false});
-		error = undefined;
-		try{
-			empty.getRoom({x:0,y:0,z:0});
-		} catch(e) {
-			error = e;
-		}
-
-		expect(error).is.not.undefined;
-		expect(error instanceof dungeon.NoRoomError).is.true;
+		expect(empty.getRoom({x:0,y:0,z:0})).is.undefined;
 		done();
 	});
 
