@@ -28,5 +28,6 @@
 	"%s is holding...": "%s is holding...",
 	"There isn't anything like that inside %s.": "There isn't anything like that inside %s.",
 	"You get %s out from %s.": "You get %s out from %s.",
-	"You are equipped by the gods.": "You are equipped by the gods."
+	"You are equipped by the gods.": "You are equipped by the gods.",
+	"%s": "%s"
 }

@@ -128,9 +128,8 @@ export class Command{
 		let names: {[key: string]: Param} = {};
 		for(let param of this._params) names[param.name] = param;
 
-		// completed lookups
+		// complete lookups
 		let incomplete = this._params.concat();
-		console.log(incomplete);
 		while(incomplete.length > 0){
 			for(let i=0;i<incomplete.length;i++){
 				let param: Param = incomplete[i];
