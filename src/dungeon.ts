@@ -368,6 +368,46 @@ export class Mob extends Movable{
 	health: number = 100;
 	mana: number = 100;
 	energy: number = 100;
+	
+	ask(question: string, callback: (...args:string[]) => void){
+		if(this.player) this.player.ask(question, callback);
+	}
+
+	yesno(question: string, callback: (yes: boolean|undefined) => void){
+		if(this.player) this.player.yesno(question, callback);
+	}
+
+	send(data: string, colorize?:boolean){
+		if(this.player) this.player.send(data, colorize);
+	}
+
+	sendLine(data: string, colorize?:boolean){
+		if(this.player) this.player.sendLine(data, colorize);
+	}
+
+	sendMessage(data: string, msgCategory: MessageCategory, linebreak?:boolean){
+		if(this.player) this.player.sendMessage(data, msgCategory, linebreak);
+	}
+
+	message(data: string){
+		if(this.player) this.player.message(data);
+	}
+
+	chat(data: string){
+		if(this.player) this.player.chat(data);
+	}
+
+	info(data: string){
+		if(this.player) this.player.info(data);
+	}
+
+	sendPrompt(){
+		if(this.player) this.player.sendPrompt();
+	}
+
+	showRoom(){
+		if(this.player) this.player.showRoom();
+	}
 }
 
 export class Item extends DObject{
