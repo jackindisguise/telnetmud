@@ -1,0 +1,185 @@
+commit 8f8b10242f4279271ed3caf39ddfa8ad105ed146
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Tue Jun 16 06:20:42 2020 -0500
+
+    Added TypeDoc.
+
+commit 88d2281e3dd088a59760dfbcd27906dc08412553
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Mon Jun 15 04:59:58 2020 -0500
+
+    again
+
+commit 9c312d61ca8ac6379e70460707e1e3ec8249e365
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Mon Jun 15 04:58:08 2020 -0500
+
+    Forgot i was trying to change this.
+    changed it back cause it doesn't work right now.
+
+commit f954e5a7f2e40006985a7b01c531451a5d3f4497
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Mon Jun 15 04:56:50 2020 -0500
+
+    Added some more complex command processing.
+    Will work on it later.
+
+commit 14b8292b30663da51e4f3eaa2c080c8d9b8752a6
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sat Jun 13 09:42:57 2020 -0500
+
+    Moved Player and relevant data to player.ts from mud.ts
+    Added mapText field to dungeon objects.
+
+commit 4c5ed2dc0d98db9a3773b0be222a63f6bae501ef
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Thu Jun 11 08:00:18 2020 -0500
+
+    Working on some stuff.
+
+commit 174392cadf22b5c231ce704b9164ced7a4a32621
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Tue Jun 9 00:39:20 2020 -0500
+
+    Added a worldmap thing.
+    Will work on it more later.
+
+commit e44ea578b944f187b6bdfdc2f56995cc4440961c
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun Jun 7 22:27:35 2020 -0500
+
+    Refactored some code.
+    Added commands that are user-editable YAML files.
+    Not sure if I even like this idea.
+    The current implementation is not acceptable.
+    I'll work on it later though.
+
+commit 481cb2c10eaf90ac1aecd153f3dda7c6be39c7b6
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Thu Jun 4 21:46:49 2020 -0500
+
+    I'm using maps to replace giant switches in many places.
+    I'm not really sure if I like the usage of maps.
+    I'm not really used to using them either.
+    We'll see.
+
+commit 4a14ac791c6018925a77e670fced272a4cb37e7c
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Thu Jun 4 20:14:52 2020 -0500
+
+    Added cron.
+    Adding more tests.
+    Rooms now return a safe copy of their coordinates that can be edited.
+    This way I don't have to ensure I create a safe coordinate object in the chain.
+    step() now requires canStep() to return true first.
+
+commit 39c7f733228ddc059681c38bf0d4eda8fdf9e418
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Tue Jun 2 15:58:13 2020 -0500
+
+    Completely replaced old Dungeon system.
+
+commit 0ba55199b0d460ec0c7918da8dd20cb8088fe251
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Mon Jun 1 07:38:23 2020 -0500
+
+    Adding more unit tests.
+
+commit 11d8ad242aead465989d51aced16b364fa6a7214
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 17:53:14 2020 -0500
+
+    Don't use 0x10.
+
+commit 0daa360b554b300df1d6180ddf95af0617761e7e
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 17:50:34 2020 -0500
+
+    Fixed huge bug!
+    Coordinates passed from a Room to getStep would be directly modified.
+    
+    Gotta be careful with passing objects as arguments from objects where
+    those objects are a property.
+
+commit 08e9aec477de658971d1f413787af5f04d61ba40
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 05:02:56 2020 -0500
+
+    Added more coverage.
+
+commit 81d6d1b2b5ffbdf3d78eb4ed575fa993d5686696
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 04:22:40 2020 -0500
+
+    Adding coverage support.
+
+commit 08136817054141112d1259179763f1045237c055
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 03:33:09 2020 -0500
+
+    Added some more testing.
+    Fixing the message category system.
+
+commit 2c7cbbc6fc57f4fa982e10eaf82048b57c15fafc
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 02:45:51 2020 -0500
+
+    Dunno why this is here.
+
+commit 3fba93e892368c4b976b54d5ec866da820000dfc
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Sun May 31 02:44:44 2020 -0500
+
+    Adding unit tests for extension packages.
+
+commit 505f4904e79ccbf93c84ea2c8db9406b103d9619
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Fri May 29 18:30:10 2020 -0500
+
+    Added locale stuff.
+
+commit d32d134c3a93fb7be435eee3950854e31f931837
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Thu May 28 22:04:50 2020 -0500
+
+    Added extensions to string, math, and array.
+    Added testing structure.
+    Changed project name.
+    Working on a lot of stuff.
+
+commit 5bea92bb1c5ff159c03fbfbab703f8fb768bcd77
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Fri May 22 22:01:51 2020 -0500
+
+    Working on loaders.
+    Working on extending stuff.
+
+commit c7ff55151248ba9abd9b3cc036b7a5bba2837da8
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Fri May 22 09:56:28 2020 -0500
+
+    Working on loaders.
+
+commit 5c62939ce6688593aad2546857926be72bcb310f
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Fri May 22 08:26:50 2020 -0500
+
+    Changing to telnet-based MUD cause making a web client is too much trouble.
+
+commit 64ce375a9300a22297c5a07160a60a39a46175f7
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Wed May 6 22:59:23 2020 -0500
+
+    Messing with session stuff.
+
+commit 4ce5797561ba716c298cbc9e847e3498e810777d
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Wed May 6 20:14:38 2020 -0500
+
+    Initial commit.
+
+commit 8e8069f5d7c32fc0e559f8e1cd9a1d84ee306ee7
+Author: jackindisguise <incognitus.me@gmail.com>
+Date:   Wed May 6 20:11:59 2020 -0500
+
+    Initial commit

@@ -7,7 +7,11 @@
     "test": "mocha -r ts-node/register --file setup.spec.ts src/**/*.spec.ts",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
 	"make": "tsc",
-	"doc": "typedoc"
+	"doc": "typedoc",
+	"change": "git log v%npm_package_version%..@ > changes/changes.txt",
+	"preversion": "npm test",
+	"version": "npm run make",
+	"postversion": "npm run coverage && npm run doc && git add -A . && git push && git push --tags"
   },
   "author": "",
   "license": "ISC",
