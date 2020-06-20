@@ -22,7 +22,7 @@ export class Player{
 		let player: Player = this;
 		this.client = client;
 		client.on("command", function(line: string){
-			player.command(line);
+			player.command(line.trim());
 		});
 	}
 

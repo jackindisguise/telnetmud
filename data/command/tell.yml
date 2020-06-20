@@ -1,5 +1,5 @@
 ---
-regex: ^(?:t|te|tel|tell) (.*?) (.+)
+regex: ^(?:t|te|tel|tell) (.*?) (.+)$
 params: "target:player in players; message:string"
 fun: |-
   if(player === target) {

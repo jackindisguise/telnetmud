@@ -1,5 +1,5 @@
 ---
-regex: ^(?:out|outfit)\s*$
+regex: ^(?:out|outfit)$
 fun: |-
   let sword = new DObject();
   sword.display = "a longsword";

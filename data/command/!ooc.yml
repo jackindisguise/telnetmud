@@ -1,4 +1,4 @@
 ---
-regex: ^(?:o|oo|ooc)\s*$ # only match o/oo/ooc by itself
+regex: ^(?:o|oo|ooc)$ # only match o/oo/ooc by itself
 fun: |-
   player.message(_("What do you want to say?"));

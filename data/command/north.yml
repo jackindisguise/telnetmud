@@ -1,5 +1,5 @@
 ---
-regex: ^(?:n|no|nor|nort|north)\s*$
+regex: ^(?:n|no|nor|nort|north)$
 fun: |-
   let dir = direction.Direction.NORTH;
   if(!player.mob.canStep(dir)) {

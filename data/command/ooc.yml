@@ -1,5 +1,5 @@
 ---
-regex: ^(?:o|oo|ooc) (.+)
+regex: ^(?:o|oo|ooc) (.+)$
 params: message:string
 fun: |-
   for(let target of MUD.players){

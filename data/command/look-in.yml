@@ -1,5 +1,5 @@
 ---
-regex: ^(?:l|lo|loo|look) (?:i|in) (.+)\s*$
+regex: ^(?:l|lo|loo|look) (?:i|in|into) (.+)$
 params: "container:obj in inventory"
 fun: |-
   if(!container){

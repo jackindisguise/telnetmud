@@ -1,4 +1,4 @@
 ---
-regex: ^(?:l|lo|loo|look)\s*$
+regex: ^(?:l|lo|loo|look)$
 fun: |-
   player.showRoom();

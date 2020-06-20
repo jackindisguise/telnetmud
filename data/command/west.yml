@@ -1,5 +1,5 @@
 ---
-regex: ^(?:w|we|wes|west)\s*$
+regex: ^(?:w|we|wes|west)$
 fun: |-
   let dir = direction.Direction.WEST;
   if(!player.mob.canStep(dir)) {
