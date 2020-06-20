@@ -1,8 +1,12 @@
 ---
-regex: ^(?:l|lo|loo|look) in (.+)\s*$
+regex: ^(?:l|lo|loo|look) (?:i|in) (.+)\s*$
 params: "container:obj in inventory"
 fun: |-
-  let list = [_("%s is holding...", container.display)];
-  if(container.contents.length === 0) list.push("Nothing...");
-  for(let obj of container.contents) list.push(obj.display)
-  player.info(list.join("\r\n  "));
+  if(!container){
+    player.message(_("You aren't carrying anything like that."));
+  } else {
+    let list = [_("%s is holding...", container.display)];
+    if(container.contents.length === 0) list.push("Nothing...");
+    for(let obj of container.contents) list.push(obj.display)
+    player.info(list.join("\r\n  "));
+  }

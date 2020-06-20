@@ -1,0 +1,10 @@
+---
+regex: ^(?:p|pu|put) (.*?) (?:(?:i|in|into) )?(.+)$
+params: "item:obj in inventory; container:obj in inventory"
+fun: |-
+  if(!container || !item){
+    player.message(_("You aren't carrying anything like that."));
+  } else {
+    container.add(item);
+    player.message(_("You put %s into %s.", item.display, container.display));
+  }

@@ -1,5 +1,5 @@
 ---
-regex: ^(?:g|ge|get) (.*?) from (.+)$
+regex: ^(?:g|ge|get) (.*?) (?:from )?(.+)$
 params: "item:obj in container; container:obj in inventory"
 fun: |-
   if(!container){

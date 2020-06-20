@@ -1,12 +1,11 @@
-import { logger } from "./util/logger";
 import * as io from "./net/io";
 import * as database from "./database";
 import * as dungeon from "./dungeon";
-import * as stringx from "./lib/string";
+import * as __PACKAGE__ from "../package.json";
+import { logger } from "./util/logger";
 import { Player, MessageCategory } from "./player";
 import { HelpFile } from "./help";
 import { _ } from "../i18n";
-import { __VERSION__ } from "../package";
 
 export class MUD{
 	static server: io.Server = new io.TelnetServer();
@@ -30,7 +29,7 @@ export class MUD{
 
 			// send greeting
 			let greeting: HelpFile|undefined = database.getHelpFileByKeyword(_("greeting"));
-			player.sendLine(_("telnetMUD v%s", __VERSION__));
+			player.sendLine(_("telnetMUD v%s", __PACKAGE__.version));
 			if(greeting) player.sendLine(greeting.body);
 
 			// start login process

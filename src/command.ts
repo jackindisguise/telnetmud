@@ -151,22 +151,24 @@ export class Command{
 
 					// search for result
 					let result;
-					if(_type === Player) {
-						result = stringx.searchList(word, location, function(needle: string, target:Player){
-							if(!(target instanceof Player)) return false;
-							let player: Player = target;
-							if(!player.mob) return false;
-							if(stringx.compareKeywords(needle, player.mob.keywords)) return true;
-							return false;
-						});
-	
-					// DObject type
-					} else {
-						result = stringx.searchList(word, location, function(needle: string, target:dungeon.DObject){
-							if(!(target instanceof _type)) return false;
-							if(stringx.compareKeywords(needle, target.keywords)) return true;
-							return false
-						});
+					if(location) {
+						if(_type === Player) {
+							result = stringx.searchList(word, location, function(needle: string, target:Player){
+								if(!(target instanceof Player)) return false;
+								let player: Player = target;
+								if(!player.mob) return false;
+								if(stringx.compareKeywords(needle, player.mob.keywords)) return true;
+								return false;
+							});
+		
+						// DObject type
+						} else {
+							result = stringx.searchList(word, location, function(needle: string, target:dungeon.DObject){
+								if(!(target instanceof _type)) return false;
+								if(stringx.compareKeywords(needle, target.keywords)) return true;
+								return false
+							});
+						}
 					}
 
 					results[param.name] = result;
