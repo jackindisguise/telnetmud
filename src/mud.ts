@@ -1,11 +1,19 @@
+import * as crypto from "crypto";
 import * as io from "./net/io";
 import * as database from "./database";
 import * as dungeon from "./dungeon";
+import { Character, CharacterData } from "./character";
 import * as __PACKAGE__ from "../package.json";
 import { logger } from "./util/logger";
 import { Player, MessageCategory } from "./player";
 import { HelpFile } from "./help";
 import { _ } from "../i18n";
+
+const passwordSecret = "kickEEwinTI";
+
+export function passwordHash(password: string): string{
+	return crypto.createHmac('sha256', passwordSecret).update(password).digest('hex');
+}
 
 export class MUD{
 	static server: io.Server = new io.TelnetServer();
@@ -61,25 +69,67 @@ export class MUD{
 
 	private static nanny(player: Player){
 		let name: string, password: string;
-		let mob: dungeon.Mob|undefined;
+		let character: Character|undefined;
+		let data: CharacterData|undefined;
 		function getName(){
 			player.ask(_("What's your name?"), function(response: string){
 				name = response;
-				confirmName();
+				data = database.getCharacterByName(name);
+				if(data) getExistingCharacterPassword();
+				else confirmNewName();
 			});
 		};
 
-		function confirmName(){
+		function getExistingCharacterPassword(){
+			player.ask(_("Password:"), function(response: string){
+				if(!data) return getName();
+				let hashed = passwordHash(response);
+				if(data.password !== hashed){
+					player.sendLine("That password is incorrect.");
+					return getName();
+				}
+
+				loadCharacter();
+			});
+		}
+
+		function loadCharacter(){
+			if(!data) return getName();
+			// replace this with a generic loading function from database
+			character = new Character({password:data.password});
+			character.name = data.name;
+			motd();
+		}
+
+		function confirmNewName(){
 			player.yesno(_("You sure your name is %s?", name), function(yes: boolean|undefined){
-				if(yes === undefined) return confirmName();
+				if(yes === undefined) return confirmNewName();
 				if(!yes) return getName();
-				return createNewCharacter();
+				return createPassword();
 			});
 		};
+
+		function createPassword(){
+			player.ask(_("Please enter a password:", name), function(response: string){
+				confirmPassword(response);
+			});
+		};
+
+		function confirmPassword(original: string){
+			player.ask(_("Please confirm your password:", name), function(response: string){
+				if(original === response){
+					password = response;
+					createNewCharacter();
+				} else {
+					player.sendLine("Those don't match!");
+					createPassword();
+				}
+			});
+		}
 
 		function createNewCharacter(){
-			mob = new dungeon.Mob();
-			mob.name = name;
+			character = new Character({password:passwordHash(password)});
+			character.name = name;
 			motd();
 		}
 
@@ -90,10 +140,10 @@ export class MUD{
 		}
 
 		function finish(){
-			if(!mob) throw new Error(_("Somehow finished nanny with no mob."));
-			player.mob = mob;
-			mob.move(MUD.world.getRoom(0,0,0));
-			player.sendMessage(_("Welcome to the world, %s!", mob.toString()), MessageCategory.MSG_INFO);
+			if(!character) throw new Error(_("Somehow finished nanny with no character."));
+			player.mob = character;
+			character.move(MUD.world.getRoom(0,0,0));
+			player.info(_("Welcome to the world, %s!", character.toString()));
 			player.sendPrompt();
 		};
 

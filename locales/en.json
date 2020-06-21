@@ -32,5 +32,9 @@
 	"%s": "%s",
 	"no": "no",
 	"You put %s into %s.": "You put %s into %s.",
-	"You aren't carrying anything like that.": "You aren't carrying anything like that."
+	"You aren't carrying anything like that.": "You aren't carrying anything like that.",
+	"Please enter a password:": "Please enter a password:",
+	"Please confirm your password:": "Please confirm your password:",
+	"Password:": "Password:",
+	"Somehow finished nanny with no character.": "Somehow finished nanny with no character."
 }

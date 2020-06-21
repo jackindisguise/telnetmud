@@ -7,6 +7,7 @@ import * as help from "./help";
 import * as mud from "./mud";
 import { Dungeon, DungeonPrototype, Room } from "./dungeon";
 import { logger } from "./util/logger";
+import { CharacterData } from "./character";
 
 function loadGameFile(done: Function){
 	fs.readFile(database.gameFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
@@ -70,6 +71,26 @@ function loadCommands(done: Function){
 	});
 }
 
+function loadCharacters(done: Function){
+	fs.readdir(database.characterFilePath, function(err: NodeJS.ErrnoException | null, files: string[]){
+		let c = files.length;
+		logger.debug("Loading characters...")
+		for(let file of files){
+			let path = database.characterFilePath + file;
+			fs.readFile(path, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
+				let yml: CharacterData = yaml.parse(data);
+				if(yml && yml.name && yml.password) {
+					logger.debug(`Loading character '${path}'`);
+					database.addCharacterData(yml);
+				}
+
+				c--;
+				if(c===0) done();
+			});
+		}
+	});
+}
+
 function loadWorldDungeon(done: Function){
 	fs.readFile(database.worldDungeonFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
 		let yml: DungeonPrototype = yaml.parse(data);
@@ -98,7 +119,7 @@ function loadWorldDungeon(done: Function){
 	});
 }
 
-const loaders: Function[] = [loadGameFile, loadServerFile, loadHelpFiles, loadCommands, loadWorldDungeon];
+const loaders: Function[] = [loadGameFile, loadServerFile, loadHelpFiles, loadCommands, loadCharacters, loadWorldDungeon];
 export function load(done: Function){
 	function next(){
 		let loader: Function|undefined = loaders.shift();

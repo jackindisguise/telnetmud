@@ -149,4 +149,13 @@ export class Player{
 		lines.push("-".repeat(size*2+3));
 		this.info(lines.join("\r\n"));
 	}
+
+	save(){
+		if(!this.mob) return;
+		// use keywords, lowercase, remove whitespace
+		let safe = this.mob.keywords.toLowerCase().replace(/\s/g, "");
+	}
+
+	load(yml: string){
+	}
 }
