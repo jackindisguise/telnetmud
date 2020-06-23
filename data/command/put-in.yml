@@ -1,5 +1,6 @@
 ---
-regex: ^(?:p|pu|put) (.*?) (?:(?:i|in|into) )?(.+)$
+syntax: put <item> [in|into|inside] <container>
+regex: ^(?:p|pu|put) (.*?) (?:(?:i|in|into|inside) )?(.+)$
 params: "item:obj in inventory; container:obj in inventory"
 fun: |-
   if(!container || !item){

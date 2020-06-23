@@ -1,4 +1,5 @@
 ---
+syntax: get <item> [from] <container>
 regex: ^(?:g|ge|get) (.*?) (?:from )?(.+)$
 params: "item:obj in container; container:obj in inventory"
 fun: |-

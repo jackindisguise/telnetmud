@@ -1,4 +1,5 @@
 ---
+syntax: tell <target> <message>
 regex: ^(?:t|te|tel|tell) (.*?) (.+)$
 params: "target:player in players; message:string"
 fun: |-

@@ -1,4 +1,5 @@
 ---
+syntax: south
 regex: ^(?:s|so|sou|sout|south)$
 fun: |-
   let dir = direction.Direction.SOUTH;

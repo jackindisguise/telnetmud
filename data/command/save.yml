@@ -1,4 +1,5 @@
 ---
+syntax: save
 regex: ^(?:s|sa|sav|save)$
 fun: |-
   if(!(player.mob instanceof Character)){

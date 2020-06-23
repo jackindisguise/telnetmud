@@ -1,4 +1,5 @@
 ---
+syntax: ooc <message>
 regex: ^(?:o|oo|ooc) (.+)$
 params: message:string
 fun: |-

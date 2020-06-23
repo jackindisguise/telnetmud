@@ -1,4 +1,5 @@
 ---
+syntax: outfit
 regex: ^(?:out|outfit)$
 fun: |-
   let sword = new DObject();

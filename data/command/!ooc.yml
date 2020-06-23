@@ -1,4 +1,5 @@
 ---
+error: true # error catching function
 regex: ^(?:o|oo|ooc)$ # only match o/oo/ooc by itself
 fun: |-
   player.message(_("What do you want to say?"));

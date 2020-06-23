@@ -1,4 +1,5 @@
 ---
+syntax: inventory
 regex: ^(?:i|in|inv|inventory)$
 fun: |-
   let list = [_("You are carrying...")];

@@ -1,5 +1,6 @@
 ---
-regex: ^(?:l|lo|loo|look) (?:i|in|into) (.+)$
+syntax: look in|into|inside <container>
+regex: ^(?:l|lo|loo|look) (?:i|in|into|inside) (.+)$
 params: "container:obj in inventory"
 fun: |-
   if(!container){
