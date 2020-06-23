@@ -59,7 +59,7 @@ function loadCommands(done: Function){
 				let yml = yaml.parse(data);
 				if(yml && yml.regex && yml.fun) {
 					logger.debug(`Loading command '${path}'`);
-					let script: vm.Script = new vm.Script(yml.fun);
+					let script: vm.Script = new vm.Script(`(function(){${yml.fun}})();`);
 					let nCommand = new command.Command(new RegExp(yml.regex, "i"), script, yml.params);
 					database.addCommand(nCommand);
 				}

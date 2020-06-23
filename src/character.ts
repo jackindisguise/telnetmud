@@ -18,11 +18,9 @@ export class Character extends Mob{
 	}
 
 	createCharacterData(): CharacterData{
-		let data: CharacterData = {
+		return {
 			name: this.keywords,
 			password: this.password
 		};
-
-		return data;
 	}
 }

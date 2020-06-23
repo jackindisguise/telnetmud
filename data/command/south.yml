@@ -2,9 +2,15 @@
 regex: ^(?:s|so|sou|sout|south)$
 fun: |-
   let dir = direction.Direction.SOUTH;
-  if(!player.mob.canStep(dir)) {
-    player.message("Alas, you cannot go that way.");
-  } else {
-    player.mob.step(dir);
-    player.showRoom();
+  if(player.mob.fighting){
+    player.message(_("You're a little busy right now."));
+    return;
   }
+  
+  if(!player.mob.canStep(dir)) {
+    player.message(_("Alas, you cannot go that way."));
+    return;
+  }
+
+  player.mob.step(dir);
+  player.showRoom();

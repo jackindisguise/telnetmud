@@ -367,7 +367,8 @@ export class Mob extends Movable{
 	health: number = 100;
 	mana: number = 100;
 	energy: number = 100;
-	
+	fighting: Mob|undefined;
+
 	ask(question: string, callback: (...args:string[]) => void){
 		if(this.player) this.player.ask(question, callback);
 	}

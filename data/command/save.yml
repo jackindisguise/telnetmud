@@ -1,9 +1,10 @@
 ---
 regex: ^(?:s|sa|sav|save)$
 fun: |-
-  if(player.mob instanceof Character){
-    player.message(JSON.stringify(player.mob.createCharacterData()));
-    console.log(player.mob.createCharacterData());
-  } else {
+  if(!(player.mob instanceof Character)){
     player.message("You're not even a character.");
+    return;
   }
+
+  player.message(JSON.stringify(player.mob.createCharacterData()));
+  console.log(player.mob.createCharacterData());
