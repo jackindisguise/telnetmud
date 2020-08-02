@@ -1,8 +1,9 @@
-import { Mob, DObject, Room } from "./dungeon";
+import { Mob, DObject, Room, CartesianCoordinates } from "./dungeon";
 
 export type CharacterData = {
 	name: string,
-	password: string
+	password: string,
+	location: CartesianCoordinates
 }
 
 type CharacterOptions = {
@@ -20,7 +21,8 @@ export class Character extends Mob{
 	createCharacterData(): CharacterData{
 		return {
 			name: this.keywords,
-			password: this.password
+			password: this.password,
+			location: {x:this.x||0, y:this.y||0, z:this.z||0}
 		};
 	}
 }
