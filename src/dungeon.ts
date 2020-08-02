@@ -1,6 +1,7 @@
 import { Direction, Directions } from "./direction";
 import * as color from "./color";
 import * as player from "./player";
+import { CombatManager } from "./combat";
 
 export type Dimensions = {
 	width: number,
@@ -362,12 +363,16 @@ export class Movable extends DObject{
 }
 
 export class Mob extends Movable{
-	player: player.Player|undefined;
+	player?: player.Player;
 	mapText: string = "!";
 	health: number = 100;
 	mana: number = 100;
 	energy: number = 100;
-	fighting: Mob|undefined;
+	strength: number = 10;
+	agility: number = 10;
+	intelligence: number = 10;
+	hated: Map<Mob, number> = new Map<Mob, number>();
+	target?: Mob;
 
 	ask(question: string, callback: (...args:string[]) => void){
 		if(this.player) this.player.ask(question, callback);
@@ -407,6 +412,76 @@ export class Mob extends Movable{
 
 	showRoom(){
 		if(this.player) this.player.showRoom();
+	}
+
+	hit(target: Mob){
+		if(!this.target) this.engage(target);
+		let damage = this.strength * 0.66;
+		let defense = target.strength * 0.33;
+		let final = Math.max(Math.floor(damage-defense),0);
+		console.log(`${this.name} hits ${target.name} for ${final} damage. [${Math.ceil(target.health-final)}]`);
+		target.damage(final, this);
+	}
+
+	damage(amount: number, source?: Mob){
+		this.health -= amount;
+		if(source) this.addHate(source, amount);
+		if(this.health < 1) this.die(source);
+	}
+
+	addHate(target: Mob, amount: number){
+		let value: number|undefined = this.hated.get(target);
+		this.hated.set(target, (value?value:0)+amount);
+		this.selectMostHatedTarget();
+	}
+
+	removeHateTarget(mob: Mob){
+		if(!this.hated.has(mob)) return;
+		this.hated.delete(mob);
+		this.selectMostHatedTarget();
+	}
+
+	selectMostHatedTarget(){
+		let mostHated: Mob|undefined;
+		let hateValue: number = 0;
+		for(let mob of this.hated.keys()){
+			let value: number|undefined = this.hated.get(mob);
+			if(value === undefined) continue;
+			if(!mostHated || hateValue < value){
+				mostHated = mob;
+				hateValue = value;
+			}
+		}
+
+		if(this.target === mostHated) return;
+		if(!mostHated) {
+			console.log(`${this.name} doesn't hate anyone anymore.`)
+			this.disengage();
+			return;
+		}
+
+		console.log(`${this.name} hates ${mostHated.name} the most now.`)
+		this.engage(mostHated);
+	}
+
+	engage(target: Mob){
+		console.log(`${this.name} engaging ${target.name}.`)
+		this.target = target;
+		this.addHate(target, 0);
+		CombatManager.add(this);
+		CombatManager.add(target);
+	}
+
+	disengage(){
+		console.log(`${this.name} disengaging from ${this.target?.name}.`);
+		this.target = undefined;
+		this.hated = new Map<Mob, number>();
+	}
+
+	die(killer?: Mob){
+		console.log(`${this.name} dies!`);
+		this.disengage();
+		CombatManager.death(this);
 	}
 }
 
