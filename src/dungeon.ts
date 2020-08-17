@@ -2,6 +2,7 @@ import { Direction, Directions } from "./direction";
 import * as color from "./color";
 import * as player from "./player";
 import { CombatManager } from "./combat";
+import { Attribute, AttributeID } from "./attribute";
 
 export type Dimensions = {
 	width: number,
@@ -365,14 +366,19 @@ export class Movable extends DObject{
 export class Mob extends Movable{
 	player?: player.Player;
 	mapText: string = "!";
-	health: number = 100;
-	mana: number = 100;
-	energy: number = 100;
-	strength: number = 10;
-	agility: number = 10;
-	intelligence: number = 10;
-	hated: Map<Mob, number> = new Map<Mob, number>();
-	target?: Mob;
+	currentHealth: number = 100;
+	currentStamina: number = 100;
+	currentMana: number = 100;
+	attributes: Map<AttributeID, Attribute> = new Map<AttributeID, Attribute>([
+		[AttributeID.STRENGTH, new Attribute()],
+		[AttributeID.AGILITY, new Attribute()],
+		[AttributeID.INTELLIGENCE, new Attribute()],
+		[AttributeID.MAX_HEALTH, new Attribute()],
+		[AttributeID.MAX_STAMINA, new Attribute()],
+		[AttributeID.MAX_MANA, new Attribute()]
+	]);
+	hated: Map<Mob, number> = new Map<Mob, number>(); // hate tracker for AI
+	target?: Mob; // mob we're currently in combat with
 
 	ask(question: string, callback: (...args:string[]) => void){
 		if(this.player) this.player.ask(question, callback);
@@ -414,19 +420,42 @@ export class Mob extends Movable{
 		if(this.player) this.player.showRoom();
 	}
 
+	get strength(): number{
+		return this.attributes.get(AttributeID.STRENGTH)?.value || 0;
+	}
+
+	get agility(): number{
+		return this.attributes.get(AttributeID.AGILITY)?.value || 0;
+	}
+
+	get intelligence(): number{
+		return this.attributes.get(AttributeID.INTELLIGENCE)?.value || 0;
+	}
+
+	get maxHealth(): number{
+		return this.attributes.get(AttributeID.MAX_HEALTH)?.value || 0;
+	}
+
+	get maxStamina(): number{
+		return this.attributes.get(AttributeID.MAX_STAMINA)?.value || 0;
+	}
+
+	get maxMana(): number{
+		return this.attributes.get(AttributeID.MAX_MANA)?.value || 0;
+	}
+
 	hit(target: Mob){
 		if(!this.target) this.engage(target);
 		let damage = this.strength * 0.66;
 		let defense = target.strength * 0.33;
 		let final = Math.max(Math.floor(damage-defense),0);
-		console.log(`${this.name} hits ${target.name} for ${final} damage. [${Math.ceil(target.health-final)}]`);
 		target.damage(final, this);
 	}
 
 	damage(amount: number, source?: Mob){
-		this.health -= amount;
+		this.currentHealth -= amount;
 		if(source) this.addHate(source, amount);
-		if(this.health < 1) this.die(source);
+		if(this.currentHealth < 1) this.die(source);
 	}
 
 	addHate(target: Mob, amount: number){
