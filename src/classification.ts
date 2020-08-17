@@ -19,9 +19,6 @@ export class Classification{
 }
 
 export class Race extends Classification{
-}
-
-export class Human extends Race{
 	attributeBase = new Map<AttributeID, number>([
 		[AttributeID.STRENGTH, 10],
 		[AttributeID.AGILITY, 10],
@@ -30,12 +27,9 @@ export class Human extends Race{
 }
 
 export class Class extends Classification{
-}
-
-export class Warrior extends Class{
 	attributePerLevel = new Map<AttributeID, number>([
-		[AttributeID.STRENGTH, 1.50],
-		[AttributeID.AGILITY, 1.25],
-		[AttributeID.INTELLIGENCE, 1.25],
+		[AttributeID.STRENGTH, 1],
+		[AttributeID.AGILITY, 1],
+		[AttributeID.INTELLIGENCE, 1],
 	])
 }
