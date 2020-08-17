@@ -159,7 +159,3 @@ export class Player{
 	load(yml: string){
 	}
 }
-
-export class Character extends dungeon.Mob{
-
-}

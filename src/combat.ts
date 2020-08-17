@@ -54,7 +54,7 @@ export class CombatManager{
 		console.log("");
 	}
 
-	static death(deceased: Mob){
+	static die(deceased: Mob){
 		for(let mob of CombatManager.mobs){
 			mob.removeHateTarget(deceased);
 		}

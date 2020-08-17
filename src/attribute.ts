@@ -14,7 +14,7 @@ export const AttributeNames = new Map<AttributeID, string>([
 	[AttributeID.MAX_HEALTH, "max health"],
 	[AttributeID.MAX_STAMINA, "max stamina"],
 	[AttributeID.MAX_MANA, "max mana"]
-]);
+])
 
 export enum ModifierType{
 	BASE,
@@ -57,7 +57,7 @@ export class Attribute{
 	}
 
 	removeModifier(...modifiers: AttributeModifier[]){
-		for(let modifier of modifiers){
+		for(let modifier of modifiers.concat()){
 			let pos = this.modifiers.indexOf(modifier);
 			if(pos === -1) continue;
 			this.modifiers.splice(pos, 1);
@@ -65,21 +65,31 @@ export class Attribute{
 	}
 }
 
+export type AttributeModifierOptions={
+	attributeID: AttributeID,
+	type?: ModifierType,
+	value: number|(()=>number);
+}
+
 export class AttributeModifier{
 	attributeID: AttributeID;
 	type: ModifierType;
-	private _value: number | (() => number);
-	constructor(attributeID: AttributeID, type: ModifierType, value: number | (() => number)){
-		this.attributeID = attributeID;
-		this.type = type;
-		this._value = value;
+	private _value: number|(()=>number);
+	constructor(options: AttributeModifierOptions){
+		this.attributeID = options.attributeID;
+		this.type = options.type || ModifierType.BONUS;
+		this._value = options.value;
 	}
 
 	get value(): number{
-		if(typeof this._value === "function") return this._value();
-		return this._value;
+		return typeof this._value === "function" ? this._value() : this._value;
 	}
 }
 
 export class FlatAttributeModifier extends AttributeModifier{
+	
+}
+
+export class MultiplierAttributeModifier extends AttributeModifier{
+
 }

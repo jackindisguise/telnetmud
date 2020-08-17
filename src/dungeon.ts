@@ -2,7 +2,8 @@ import { Direction, Directions } from "./direction";
 import * as color from "./color";
 import * as player from "./player";
 import { CombatManager } from "./combat";
-import { Attribute, AttributeID } from "./attribute";
+import { Attribute, AttributeID, AttributeModifier, ModifierType } from "./attribute";
+import { Race, Class } from "./classification";
 
 export type Dimensions = {
 	width: number,
@@ -364,6 +365,9 @@ export class Movable extends DObject{
 }
 
 export class Mob extends Movable{
+	race?: Race;
+	class?: Class;
+	level: number = 1;
 	player?: player.Player;
 	mapText: string = "!";
 	currentHealth: number = 100;
@@ -379,6 +383,22 @@ export class Mob extends Movable{
 	]);
 	hated: Map<Mob, number> = new Map<Mob, number>(); // hate tracker for AI
 	target?: Mob; // mob we're currently in combat with
+
+	constructor(options?:DObjectOptions){
+		super(options);
+		this.generateClassificationModifiers();
+	}
+
+	private generateClassificationModifiers(){
+		let mob = this;
+		for(let attr of this.attributes.entries()){
+			attr[1].addModifier(new AttributeModifier({
+				attributeID: attr[0],
+				type: ModifierType.BASE,
+				value: function() { return mob.race?.getAttributeTotalForLevel(attr[0], mob.level) || 0; }
+			}));
+		}
+	}
 
 	ask(question: string, callback: (...args:string[]) => void){
 		if(this.player) this.player.ask(question, callback);
@@ -420,28 +440,32 @@ export class Mob extends Movable{
 		if(this.player) this.player.showRoom();
 	}
 
+	getAttribute(id:AttributeID){
+		return this.attributes.get(id)?.value || 0;
+	}
+
 	get strength(): number{
-		return this.attributes.get(AttributeID.STRENGTH)?.value || 0;
+		return this.getAttribute(AttributeID.STRENGTH);
 	}
 
 	get agility(): number{
-		return this.attributes.get(AttributeID.AGILITY)?.value || 0;
+		return this.getAttribute(AttributeID.AGILITY);
 	}
 
 	get intelligence(): number{
-		return this.attributes.get(AttributeID.INTELLIGENCE)?.value || 0;
+		return this.getAttribute(AttributeID.INTELLIGENCE);
 	}
 
 	get maxHealth(): number{
-		return this.attributes.get(AttributeID.MAX_HEALTH)?.value || 0;
+		return this.getAttribute(AttributeID.MAX_HEALTH);
 	}
 
 	get maxStamina(): number{
-		return this.attributes.get(AttributeID.MAX_STAMINA)?.value || 0;
+		return this.getAttribute(AttributeID.MAX_STAMINA);
 	}
 
 	get maxMana(): number{
-		return this.attributes.get(AttributeID.MAX_MANA)?.value || 0;
+		return this.getAttribute(AttributeID.MAX_MANA);
 	}
 
 	hit(target: Mob){
@@ -510,7 +534,7 @@ export class Mob extends Movable{
 	die(killer?: Mob){
 		console.log(`${this.name} dies!`);
 		this.disengage();
-		CombatManager.death(this);
+		CombatManager.die(this);
 	}
 }
 
