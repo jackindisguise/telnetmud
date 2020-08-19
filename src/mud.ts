@@ -2,7 +2,6 @@ import * as crypto from "crypto";
 import * as io from "./net/io";
 import * as database from "./database";
 import * as dungeon from "./dungeon";
-import { Character, CharacterData } from "./character";
 import * as __PACKAGE__ from "../package.json";
 import { logger } from "./util/logger";
 import { Player, MessageCategory } from "./player";
@@ -69,8 +68,8 @@ export class MUD{
 
 	private static nanny(player: Player){
 		let name: string, password: string;
-		let character: Character|undefined;
-		let data: CharacterData|undefined;
+		let character: dungeon.Character|undefined;
+		let data: dungeon.CharacterData|undefined;
 		function getName(){
 			player.ask(_("What's your name?"), function(response: string){
 				name = response;
@@ -96,7 +95,7 @@ export class MUD{
 		function loadCharacter(){
 			if(!data) return getName();
 			// replace this with a generic loading function from database
-			character = new Character({password:data.password});
+			character = new dungeon.Character({password:data.password});
 			character.name = data.name;
 			motd();
 		}
@@ -128,7 +127,7 @@ export class MUD{
 		}
 
 		function createNewCharacter(){
-			character = new Character({password:passwordHash(password)});
+			character = new dungeon.Character({password:passwordHash(password)});
 			character.name = name;
 			motd();
 		}

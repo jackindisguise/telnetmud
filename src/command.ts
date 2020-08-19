@@ -4,7 +4,6 @@ import { _ } from "../i18n";
 import * as dungeon from "./dungeon";
 import * as direction from "./direction";
 import * as database from "./database";
-import * as character from "./character";
 import { MessageCategory, Player } from "./player";
 import * as stringx from "./lib/string";
 
@@ -34,7 +33,7 @@ export const safeEnvironment = {
 	Room: dungeon.Room,
 	DObject: dungeon.DObject,
 	Mob: dungeon.Mob,
-	Character: character.Character,
+	Character: dungeon.Character,
 };
 
 export class Handler{

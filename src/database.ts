@@ -1,7 +1,7 @@
 import * as stringx from "./lib/string";
 import { HelpFile } from "./help";
 import { Command } from "./command";
-import { CharacterData } from "./character";
+import { CharacterData } from "./dungeon";
 
 // file names
 export const commandFilePath: string = "./data/command/";

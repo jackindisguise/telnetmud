@@ -5,9 +5,8 @@ import * as database from "./database";
 import * as command from "./command";
 import * as help from "./help";
 import * as mud from "./mud";
-import { Dungeon, DungeonPrototype, Room } from "./dungeon";
+import { Dungeon, DungeonPrototype, Room, CharacterData } from "./dungeon";
 import { logger } from "./util/logger";
-import { CharacterData } from "./character";
 
 function loadGameFile(done: Function){
 	fs.readFile(database.gameFilePath, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
