@@ -1,6 +1,7 @@
 import { logger } from "./util/logger";
+import * as stringx from "./lib/string";
 import * as io from "./net/io";
-import * as dungeon from "./dungeon";
+import { Mob, DObject, Room } from "./dungeon";
 import * as direction from "./direction";
 import { _ } from "../i18n";
 import { Handler } from "./command";
@@ -15,7 +16,7 @@ export enum MessageCategory {
 
 export class Player{
 	client: io.Client;
-	mob: dungeon.Mob|undefined;
+	private _mob: Mob|undefined;
 	msgCategory: MessageCategory|undefined = MessageCategory.MSG_DEFAULT;
 	inputCallback: ((...args:string[]) => void) | undefined;
 	constructor(client: io.Client){
@@ -24,6 +25,17 @@ export class Player{
 		client.on("command", function(line: string){
 			player.command(line.trim());
 		});
+	}
+
+	set mob(mob: Mob|undefined){
+		let omob = this._mob;
+		this._mob = mob;
+		if(omob && omob.player === this) omob.player = undefined;
+		if(mob && mob.player !== this) mob.player = this;
+	}
+
+	get mob(): Mob|undefined{
+		return this._mob;
 	}
 
 	toString(){
@@ -101,27 +113,34 @@ export class Player{
 
 	showRoom(){
 		if(!this.mob) return;
-		if(this.mob.location instanceof dungeon.DObject) {
+		if(this.mob.location instanceof DObject) {
 			this.message(_("Why are you in another object?"));
 			return;
 		}
 
-		if(!(this.mob.location instanceof dungeon.Room)){
+		if(!(this.mob.location instanceof Room)){
 			this.info(_("Where the fuck are you?"));
 			return;
 		}
 
-		let room: dungeon.Room = this.mob.location;
-		let display = `${room.name}\r\n ${room.description}\r\n\r\n`;
+		let room: Room = this.mob.location;
+		// room description
+		let description = `${room.name}\r\n ${room.description}\r\n\r\n`;
+
+		// exits
 		let exits = room.exits();
 		let text = [];
-		for(let dir of exits) text.push(direction.Direction2Word.get(dir));
-		display += _("[Exits: %s]", text.join(" "));
-		this.info(display);
+		for(let dir of exits) text.push(direction.Direction2WordShort.get(dir));
+		description += _("[Exits: %s]", text.join(" "));
+
+		// stuff in room
+		let contents = [];
+		for(let obj of room.contents) if(obj !== this.mob) contents.push(`${obj.name} is here.`);
+		if(contents.length) description += "\r\n\r\n" + contents.join("\r\n");
 	
 		// make a map
 		let size = 3;
-		let lines = ["-".repeat(size*2+3)];
+		let map = ["-".repeat(size*2+3)];
 		let area = room.dungeon.getArea(room.coordinates, size);
 		for(let y=0;y<size*2+1;y++){
 			let line = ["|"];
@@ -129,9 +148,9 @@ export class Player{
 				let room = area[y][x];
 				if(x===size && y===size) line.push("@");
 				else if(room) {
-					let mob: dungeon.Mob|undefined;
+					let mob: Mob|undefined;
 					for(let dobject of room.contents){
-						if(dobject instanceof dungeon.Mob) {
+						if(dobject instanceof Mob) {
 							mob = dobject;
 							break;
 						}
@@ -143,11 +162,19 @@ export class Player{
 			}
 
 			line.push("|");
-			lines.push(line.join(""));
+			map.push(line.join(""));
 		}
 	
-		lines.push("-".repeat(size*2+3));
-		this.info(lines.join("\r\n"));
+		map.push("-".repeat(size*2+3));
+		let splitDesc = description.split("\r\n");
+		let final = [];
+		for(let i=0;i<Math.max(map.length, splitDesc.length);i++){
+			let left = (i < map.length ? map[i] : "");
+			let right = (i < splitDesc.length ? splitDesc[i] : "");
+			final.push(stringx.pad(left, stringx.PadSide.RIGHT, size*2+3+1)+right);
+		}
+
+		this.info(final.join("\r\n"));
 	}
 
 	save(){

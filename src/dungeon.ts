@@ -1,9 +1,10 @@
 import { Direction, Directions } from "./direction";
 import * as color from "./color";
-import * as player from "./player";
+import { Player, MessageCategory } from "./player";
 import { CombatManager } from "./combat";
-import { Attribute, AttributeID, AttributeModifier, ModifierType } from "./attribute";
+import { Attribute, AttributeID, FlatAttributeModifier, ModifierType } from "./attribute";
 import { Race, Class } from "./classification";
+import { Character } from "./character";
 
 export type Dimensions = {
 	width: number,
@@ -210,7 +211,7 @@ export class Room{
 	}
 
 	add(occupier:DObject): void{
-		if(this.contents.indexOf(occupier) != -1) return;
+		if(this.contents.indexOf(occupier) !== -1) return;
 		this.contents.push(occupier);
 		if(occupier.location !== this) occupier.location = this;
 		this.dungeon.add(occupier);
@@ -218,14 +219,14 @@ export class Room{
 
 	remove(occupier:DObject): void{
 		let i:number = this.contents.indexOf(occupier);
-		if(i == -1) return;
+		if(i === -1) return;
 		this.contents.splice(i, 1);
 		this.dungeon.remove(occupier);
 		if(occupier.location === this) occupier.location = undefined;
 	}
 
 	contains(occupier:DObject): boolean{
-		return (this.contents.indexOf(occupier) != -1);
+		return (this.contents.indexOf(occupier) !== -1);
 	}
 
 	allowEnter(occupier:DObject): boolean{
@@ -368,36 +369,38 @@ export class Mob extends Movable{
 	race?: Race;
 	class?: Class;
 	level: number = 1;
-	player?: player.Player;
+	currentExperience: number = 0;
+	private _player?: Player;
 	mapText: string = "!";
 	currentHealth: number = 100;
 	currentStamina: number = 100;
 	currentMana: number = 100;
-	attributes: Map<AttributeID, Attribute> = new Map<AttributeID, Attribute>([
+/*	attributes: Map<AttributeID, Attribute> = new Map<AttributeID, Attribute>([
 		[AttributeID.STRENGTH, new Attribute()],
 		[AttributeID.AGILITY, new Attribute()],
 		[AttributeID.INTELLIGENCE, new Attribute()],
 		[AttributeID.MAX_HEALTH, new Attribute()],
 		[AttributeID.MAX_STAMINA, new Attribute()],
 		[AttributeID.MAX_MANA, new Attribute()]
-	]);
+	]);*/
 	hated: Map<Mob, number> = new Map<Mob, number>(); // hate tracker for AI
 	target?: Mob; // mob we're currently in combat with
 
 	constructor(options?:DObjectOptions){
 		super(options);
-		this.generateClassificationModifiers();
+//		this.generatePrimaryAttributeModifiers();
+//		this.generateSecondaryAttributeModifiers();
 	}
 
-	private generateClassificationModifiers(){
-		let mob = this;
-		for(let attr of this.attributes.entries()){
-			attr[1].addModifier(new AttributeModifier({
-				attributeID: attr[0],
-				type: ModifierType.BASE,
-				value: function() { return mob.race?.getAttributeTotalForLevel(attr[0], mob.level) || 0; }
-			}));
-		}
+	set player(player: Player|undefined){
+		let oplayer = this._player;
+		this._player = player;
+		if(oplayer && oplayer.mob === this) oplayer.mob = undefined;
+		if(player && player.mob !== this) player.mob = this;
+	}
+
+	get player(): Player|undefined{
+		return this._player;
 	}
 
 	ask(question: string, callback: (...args:string[]) => void){
@@ -416,7 +419,7 @@ export class Mob extends Movable{
 		if(this.player) this.player.sendLine(data, colorize);
 	}
 
-	sendMessage(data: string, msgCategory: player.MessageCategory, linebreak?:boolean){
+	sendMessage(data: string, msgCategory: MessageCategory, linebreak?:boolean){
 		if(this.player) this.player.sendMessage(data, msgCategory, linebreak);
 	}
 
@@ -438,6 +441,65 @@ export class Mob extends Movable{
 
 	showRoom(){
 		if(this.player) this.player.showRoom();
+	}
+
+/*	private generatePrimaryAttributeModifiers(){
+		let mob = this;
+		for(let attr of this.attributes.entries()){
+			attr[1].addModifier(
+				new FlatAttributeModifier({ // race modifier
+					attributeID: attr[0],
+					type: ModifierType.BASE,
+					value: function() { return mob.race?.getAttributeTotalForLevel(attr[0], mob.level) || 1; }
+				}),
+
+				new FlatAttributeModifier({ // class modifier
+					attributeID: attr[0],
+					type: ModifierType.BASE,
+					value: function() { return mob.class?.getAttributeTotalForLevel(attr[0], mob.level) || 1; }
+				})
+			);
+		}
+	}
+
+	private generateSecondaryAttributeModifiers(){
+		let mob = this;
+		let maxHealth = this.attributes.get(AttributeID.MAX_HEALTH);
+		if(maxHealth) maxHealth.addModifier(new FlatAttributeModifier({
+			attributeID: AttributeID.MAX_HEALTH,
+			type: ModifierType.BASE,
+			value: function() { return mob.strength*2; } // 1 strength = 2 hp
+		}));
+
+		let maxStamina = this.attributes.get(AttributeID.MAX_STAMINA);
+		if(maxStamina) maxStamina.addModifier(new FlatAttributeModifier({
+			attributeID: AttributeID.MAX_STAMINA,
+			type: ModifierType.BASE,
+			value: function() { return mob.agility*2; } // 1 agility = 2 stamina
+		}));
+
+		let maxMana = this.attributes.get(AttributeID.MAX_MANA);
+		if(maxMana) maxMana.addModifier(new FlatAttributeModifier({
+			attributeID: AttributeID.MAX_MANA,
+			type: ModifierType.BASE,
+			value: function() { return mob.intelligence*2; } // 1 intellience = 2
+		}));
+	}
+
+	getRescaleStatsFun(){
+		let mob = this;
+		let health = this.currentHealth / this.maxHealth;
+		let stamina = this.currentStamina / this.maxStamina;
+		let mana = this.currentMana / this.maxMana;
+		return function(){
+			mob.currentHealth = Math.max(health * mob.maxHealth, 1);
+			mob.currentStamina = Math.max(stamina * mob.maxStamina, 1);
+			mob.currentMana = Math.max(mana * mob.maxMana, 1);
+		};
+	}
+
+	gainExperience(amount: number){
+		
 	}
 
 	getAttribute(id:AttributeID){
@@ -468,11 +530,38 @@ export class Mob extends Movable{
 		return this.getAttribute(AttributeID.MAX_MANA);
 	}
 
+	get toNextLevel(): number{
+		return (this.race?.getAttributeTotalForLevel(AttributeID.TO_NEXT_LEVEL, this.level) || 0) +
+				(this.class?.getAttributeTotalForLevel(AttributeID.TO_NEXT_LEVEL, this.level) || 0)
+	}*/
+
+	act(options: {selfMessage?: string, target?: Mob, targetMessage?: string, roomMessage?: string}){
+		if(options.selfMessage) this.message(options.selfMessage);
+		if(options.targetMessage) options.target?.message(options.targetMessage);
+		if(options.roomMessage && this.location){
+			for(let object of this.location.contents){
+				if(!(object instanceof Mob)) continue;
+				if(object === this) continue;
+				if(object === options.target) continue;
+				object.message(options.roomMessage);
+			}
+		}
+	}
+
 	hit(target: Mob){
 		if(!this.target) this.engage(target);
-		let damage = this.strength * 0.66;
-		let defense = target.strength * 0.33;
+//		let damage = this.strength * 0.66;
+		let damage = 100*0.66;
+//		let defense = target.strength * 0.33;
+		let defense = 100*0.33;
 		let final = Math.max(Math.floor(damage-defense),0);
+//		console.log(`${target.name} took ${final} damage from ${this.name}. [${target.currentHealth-final}]`);
+		this.act({
+			target: target,
+			selfMessage: `You hit ${target.name} for ${final} damage. [${target.currentHealth-final}]`,
+			targetMessage: `${this.name} hits you for ${final} damage. [${target.currentHealth-final}]`,
+			roomMessage: `${this.name} hits ${target.name} for ${final} damage. [${target.currentHealth-final}]`
+		});
 		target.damage(final, this);
 	}
 
@@ -494,12 +583,18 @@ export class Mob extends Movable{
 		this.selectMostHatedTarget();
 	}
 
+	canTarget(mob: Mob): boolean{
+		if(mob.location !== this.location) return false;
+		return true;
+	}
+
 	selectMostHatedTarget(){
 		let mostHated: Mob|undefined;
 		let hateValue: number = 0;
 		for(let mob of this.hated.keys()){
 			let value: number|undefined = this.hated.get(mob);
 			if(value === undefined) continue;
+			if(!this.canTarget(mob)) continue;
 			if(!mostHated || hateValue < value){
 				mostHated = mob;
 				hateValue = value;
@@ -508,17 +603,14 @@ export class Mob extends Movable{
 
 		if(this.target === mostHated) return;
 		if(!mostHated) {
-			console.log(`${this.name} doesn't hate anyone anymore.`)
 			this.disengage();
 			return;
 		}
 
-		console.log(`${this.name} hates ${mostHated.name} the most now.`)
 		this.engage(mostHated);
 	}
 
 	engage(target: Mob){
-		console.log(`${this.name} engaging ${target.name}.`)
 		this.target = target;
 		this.addHate(target, 0);
 		CombatManager.add(this);
@@ -526,15 +618,25 @@ export class Mob extends Movable{
 	}
 
 	disengage(){
-		console.log(`${this.name} disengaging from ${this.target?.name}.`);
 		this.target = undefined;
 		this.hated = new Map<Mob, number>();
+		if(!(this instanceof Character)) this.refresh(); // NPCs heal when disengaging
+	}
+
+	refresh(){
+		this.currentHealth = 100;
+		this.currentStamina = 100;
+		this.currentMana = 100;
 	}
 
 	die(killer?: Mob){
-		console.log(`${this.name} dies!`);
+		this.act({
+			selfMessage: `You fall to the floor, DEAD.`,
+			roomMessage: `${this.name} falls to the floor, DEAD.`
+		});
 		this.disengage();
 		CombatManager.die(this);
+		this.refresh();
 	}
 }
 
