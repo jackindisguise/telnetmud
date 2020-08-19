@@ -33,6 +33,7 @@ export const safeEnvironment = {
 	// classes
 	Room: dungeon.Room,
 	DObject: dungeon.DObject,
+	Mob: dungeon.Mob,
 	Character: character.Character,
 };
 
