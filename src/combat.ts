@@ -29,11 +29,10 @@ export class CombatManager{
 	}
 
 	static cycle(){
-		console.log(`Cycle #${++this.cycles} {${new Date()}}`);
-
 		// re-sort on every cycle
 		CombatManager.mobs.sort(function(a:Mob, b:Mob): number{
-			return b.agility - a.agility;
+			return b.level - a.level;
+//			return b.agility - a.agility;
 		});
 
 		// produce safe copy
@@ -51,7 +50,6 @@ export class CombatManager{
 		}
 
 		if(!CombatManager.mobs.length) this.stop();
-		console.log("");
 	}
 
 	static die(deceased: Mob){
@@ -61,6 +59,8 @@ export class CombatManager{
 	}
 
 	static stop(){
-		CombatManager.job?.stop();
+		if(!CombatManager.job) return;
+		CombatManager.job.stop();
+		CombatManager.job = undefined;
 	}
 }
