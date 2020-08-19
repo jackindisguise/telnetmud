@@ -4,7 +4,6 @@ import { Player, MessageCategory } from "./player";
 import { CombatManager } from "./combat";
 import { Attribute, AttributeID, FlatAttributeModifier, ModifierType } from "./attribute";
 import { Race, Class } from "./classification";
-import { Character } from "./character";
 
 export type Dimensions = {
 	width: number,
@@ -637,6 +636,33 @@ export class Mob extends Movable{
 		this.disengage();
 		CombatManager.die(this);
 		this.refresh();
+	}
+}
+
+export type CharacterData = {
+	name: string,
+	password: string,
+	location: CartesianCoordinates
+}
+
+type CharacterOptions = {
+	password: string,
+	location?: DObject|Room
+}
+
+export class Character extends Mob{
+	password: string;
+	constructor(options:CharacterOptions){
+		super(options);
+		this.password = options.password;
+	}
+
+	createCharacterData(): CharacterData{
+		return {
+			name: this.keywords,
+			password: this.password,
+			location: {x:this.x||0, y:this.y||0, z:this.z||0}
+		};
 	}
 }
 
