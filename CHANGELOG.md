@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/jackindisguise/telnetmud/compare/v1.2.0...v1.3.0) (2020-08-19)
+
+
+### Features
+
+* added act() function for sending messages. ([b3caaba](https://github.com/jackindisguise/telnetmud/commit/b3caababcffaa595fedb5af6debdda36cde308da))
+* commands now have access to Mob class ([aff0c12](https://github.com/jackindisguise/telnetmud/commit/aff0c126bcefb640788f5d232f1c97c443f3c526))
+
+
+### Bug Fixes
+
+* combat stopped but you couldn't restart it due to the job lingering. ([7e4666a](https://github.com/jackindisguise/telnetmud/commit/7e4666a0f10b561d4c89eee645222bf0e67ab452))
+* combat test was failing due to HP being too low. ([5f6112b](https://github.com/jackindisguise/telnetmud/commit/5f6112b6e2e3500b9763398fe8c07e6c6efb4ab3))
+* moved Character definition to dungeon file. ([a3d2dd6](https://github.com/jackindisguise/telnetmud/commit/a3d2dd6c57405dd533308b81ba9a713cfea4a38f))
+
 ## [1.2.0](https://github.com/jackindisguise/telnetmud/compare/v1.1.0...v1.2.0) (2020-08-02)
 
 
