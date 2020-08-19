@@ -4,7 +4,8 @@ export enum AttributeID{
 	INTELLIGENCE,
 	MAX_HEALTH,
 	MAX_STAMINA,
-	MAX_MANA
+	MAX_MANA,
+	TO_NEXT_LEVEL
 }
 
 export const AttributeNames = new Map<AttributeID, string>([
@@ -13,7 +14,8 @@ export const AttributeNames = new Map<AttributeID, string>([
 	[AttributeID.INTELLIGENCE, "intelligence"],
 	[AttributeID.MAX_HEALTH, "max health"],
 	[AttributeID.MAX_STAMINA, "max stamina"],
-	[AttributeID.MAX_MANA, "max mana"]
+	[AttributeID.MAX_MANA, "max mana"],
+	[AttributeID.TO_NEXT_LEVEL, "experience to next level"]
 ])
 
 export enum ModifierType{
