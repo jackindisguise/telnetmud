@@ -23,6 +23,7 @@ export class Race extends Classification{
 		[AttributeID.STRENGTH, 10],
 		[AttributeID.AGILITY, 10],
 		[AttributeID.INTELLIGENCE, 10],
+		[AttributeID.TO_NEXT_LEVEL, 100]
 	])
 }
 
