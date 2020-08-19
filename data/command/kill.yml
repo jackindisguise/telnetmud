@@ -1,0 +1,11 @@
+---
+syntax: kill <target>
+regex: ^kill (.+)$
+params: "target:mob in room"
+fun: |-
+  if(!target){
+    player.message(_("There's nobody here like that."));
+    return;
+  }
+
+  player.mob.hit(target);

@@ -1,0 +1,7 @@
+---
+syntax: spawn
+regex: ^(?:sp|spa|spaw|spawn)$
+fun: |-
+  let m = new Mob({location:player.mob.location});
+  m.name = "Neo";
+  console.log(m);
