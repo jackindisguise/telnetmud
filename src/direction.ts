@@ -37,6 +37,17 @@ export enum DirectionWordShort {
 	DOWN = "d"
 }
 
+export function reverseDirection(dir:Direction){
+	let reversed = 0;
+	if(dir&Direction.NORTH) reversed |= Direction.SOUTH;
+	else if(dir&Direction.SOUTH) reversed |= Direction.NORTH;
+	if(dir&Direction.EAST) reversed |= Direction.WEST;
+	else if(dir&Direction.WEST) reversed |= Direction.EAST;
+	if(dir&Direction.UP) reversed |= Direction.DOWN;
+	else if(dir&Direction.DOWN) reversed |= Direction.UP;
+	return reversed;
+}
+
 export const Directions: Direction[] = [
 	Direction.NORTH,
 	Direction.SOUTH,
