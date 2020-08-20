@@ -13,7 +13,7 @@ export enum MessageCategory {
 	MSG_INFO,
 	MSG_PROMPT,
 	MSG_COMBAT,
-	MSG_MOVEMENT
+	MSG_ACTION
 }
 
 export class Player{

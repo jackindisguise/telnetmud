@@ -541,16 +541,15 @@ export class Mob extends Movable{
 		if(!room) return false;
 		this.act({
 			selfMessage: `You move towards the ${Direction2Word.get(dir)}.`,
-			roomMessage: `${this.name} moves towards the ${Direction2Word.get(dir)}.`,
-			messageCategory: MessageCategory.MSG_MOVEMENT
+			roomMessage: `${this.name} moves towards the ${Direction2Word.get(dir)}.`
 		});
 		let result = this.move(room);
-		this.act({roomMessage: `${this.name} walks in from the ${Direction2Word.get(reverseDirection(dir))}.`, messageCategory: MessageCategory.MSG_MOVEMENT});
+		this.act({roomMessage: `${this.name} walks in from the ${Direction2Word.get(reverseDirection(dir))}.`});
 		return result;
 	}
 
 	act(options: {selfMessage?: string, target?: Mob, targetMessage?: string, roomMessage?: string, messageCategory?: MessageCategory}){
-		if(options.messageCategory === undefined) options.messageCategory = MessageCategory.MSG_DEFAULT;
+		if(options.messageCategory === undefined) options.messageCategory = MessageCategory.MSG_ACTION;
 		if(options.selfMessage) this.sendMessage(options.selfMessage, options.messageCategory);
 		if(options.targetMessage) options.target?.sendMessage(options.targetMessage, options.messageCategory);
 		if(options.roomMessage && this.location){
@@ -570,9 +569,9 @@ export class Mob extends Movable{
 		let final = Math.max(Math.floor(damage-defense),0);
 		this.act({
 			target: target,
-			selfMessage: `You hit ${target.name} for ${final} damage. [${target.currentHealth-final}]`,
-			targetMessage: `${this.name} hits you for ${final} damage. [${target.currentHealth-final}]`,
-			roomMessage: `${this.name} hits ${target.name} for ${final} damage. [${target.currentHealth-final}]`,
+			selfMessage: `You hit {y${target.name}{x for {R${final}{x damage. [{R-${(final/target.maxHealth*100).toFixed(2)}%{x]`,
+			targetMessage: `{c${this.name}{x hits you for {R${final}{x damage. [{R-${(final/target.maxHealth*100).toFixed(2)}%{x]`,
+			roomMessage: `{c${this.name}{x hits {y${target.name}{x for {R${final}{x damage. [{R-${(final/target.maxHealth*100).toFixed(2)}%{x]`,
 			messageCategory: MessageCategory.MSG_COMBAT
 		});
 		target.damage(final, this);
