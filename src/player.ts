@@ -11,7 +11,9 @@ export enum MessageCategory {
 	MSG_DEFAULT,
 	MSG_CHAT,
 	MSG_INFO,
-	MSG_PROMPT
+	MSG_PROMPT,
+	MSG_COMBAT,
+	MSG_MOVEMENT
 }
 
 export class Player{
