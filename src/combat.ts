@@ -31,8 +31,7 @@ export class CombatManager{
 	static cycle(){
 		// re-sort on every cycle
 		CombatManager.mobs.sort(function(a:Mob, b:Mob): number{
-			return b.level - a.level;
-//			return b.agility - a.agility;
+			return b.agility - a.agility;
 		});
 
 		// produce safe copy
@@ -47,6 +46,12 @@ export class CombatManager{
 				CombatManager.remove(mob);
 				continue;
 			}
+		}
+
+		for(let mob of CombatManager.mobs){
+			if(!mob.target) continue;
+			mob.info(`<You: ${Math.ceil(mob.currentHealth / mob.maxHealth * 100)}%> <${mob.target.name}: ${Math.ceil(mob.target.currentHealth / mob.target.maxHealth * 100)}%>`);
+			mob.sendPrompt();
 		}
 
 		if(!CombatManager.mobs.length) this.stop();
