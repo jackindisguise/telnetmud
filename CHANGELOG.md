@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/jackindisguise/telnetmud/compare/v1.3.0...v1.4.0) (2020-08-20)
+
+
+### Features
+
+* added combat and movement message categories ([a11d6f4](https://github.com/jackindisguise/telnetmud/commit/a11d6f45457e0f7859307cec6a59854078687cfc))
+* added display name to classifications. ([d6b9009](https://github.com/jackindisguise/telnetmud/commit/d6b9009db3224d208ebe93cc3cd625e9d726166a))
+* added reverseDirection function to direction package. ([3505766](https://github.com/jackindisguise/telnetmud/commit/3505766c02bc5df8109968af24e57f766a10771f))
+* added score command. ([7079d33](https://github.com/jackindisguise/telnetmud/commit/7079d33040688a891df8acd35277070f8a082db4))
+* now sends a status report after combat rounds. ([4302b1c](https://github.com/jackindisguise/telnetmud/commit/4302b1ca185f7f019702ce1a36be4e08b18e1db5))
+* re-enabled attribute stuff for testing. ([be2d98e](https://github.com/jackindisguise/telnetmud/commit/be2d98ecf612f14497797f5896675b39d15fe219))
+
 ## [1.3.0](https://github.com/jackindisguise/telnetmud/compare/v1.2.0...v1.3.0) (2020-08-19)
 
 
