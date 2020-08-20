@@ -1,9 +1,9 @@
-import { Direction, Directions } from "./direction";
+import { Direction, Directions, Direction2Word, reverseDirection } from "./direction";
 import * as color from "./color";
 import { Player, MessageCategory } from "./player";
 import { CombatManager } from "./combat";
 import { Attribute, AttributeID, FlatAttributeModifier, ModifierType } from "./attribute";
-import { Race, Class } from "./classification";
+import { Race, Class, Human, Adventurer } from "./classification";
 
 export type Dimensions = {
 	width: number,
@@ -365,8 +365,8 @@ export class Movable extends DObject{
 }
 
 export class Mob extends Movable{
-	race?: Race;
-	class?: Class;
+	race?: Race = new Human();
+	class?: Class = new Adventurer();
 	level: number = 1;
 	currentExperience: number = 0;
 	private _player?: Player;
@@ -374,21 +374,65 @@ export class Mob extends Movable{
 	currentHealth: number = 100;
 	currentStamina: number = 100;
 	currentMana: number = 100;
-/*	attributes: Map<AttributeID, Attribute> = new Map<AttributeID, Attribute>([
+	attributes: Map<AttributeID, Attribute> = new Map<AttributeID, Attribute>([
 		[AttributeID.STRENGTH, new Attribute()],
 		[AttributeID.AGILITY, new Attribute()],
 		[AttributeID.INTELLIGENCE, new Attribute()],
 		[AttributeID.MAX_HEALTH, new Attribute()],
 		[AttributeID.MAX_STAMINA, new Attribute()],
 		[AttributeID.MAX_MANA, new Attribute()]
-	]);*/
+	]);
 	hated: Map<Mob, number> = new Map<Mob, number>(); // hate tracker for AI
 	target?: Mob; // mob we're currently in combat with
 
 	constructor(options?:DObjectOptions){
 		super(options);
-//		this.generatePrimaryAttributeModifiers();
-//		this.generateSecondaryAttributeModifiers();
+		this.generatePrimaryAttributeModifiers();
+		this.generateSecondaryAttributeModifiers();
+		this.refresh();
+	}
+
+	private generatePrimaryAttributeModifiers(){
+		let mob = this;
+		for(let attr of this.attributes.entries()){
+			attr[1].addModifier(
+				new FlatAttributeModifier({ // race modifier
+					attributeID: attr[0],
+					type: ModifierType.BASE,
+					value: function() { return mob.race?.getAttributeTotalForLevel(attr[0], mob.level) || 0; }
+				}),
+
+				new FlatAttributeModifier({ // class modifier
+					attributeID: attr[0],
+					type: ModifierType.BASE,
+					value: function() { return mob.class?.getAttributeTotalForLevel(attr[0], mob.level) || 0; }
+				})
+			);
+		}
+	}
+
+	private generateSecondaryAttributeModifiers(){
+		let mob = this;
+		let maxHealth = this.attributes.get(AttributeID.MAX_HEALTH);
+		if(maxHealth) maxHealth.addModifier(new FlatAttributeModifier({
+			attributeID: AttributeID.MAX_HEALTH,
+			type: ModifierType.BASE,
+			value: function() { return mob.strength*2; } // 1 strength = 2 hp
+		}));
+
+		let maxStamina = this.attributes.get(AttributeID.MAX_STAMINA);
+		if(maxStamina) maxStamina.addModifier(new FlatAttributeModifier({
+			attributeID: AttributeID.MAX_STAMINA,
+			type: ModifierType.BASE,
+			value: function() { return mob.agility*2; } // 1 agility = 2 stamina
+		}));
+
+		let maxMana = this.attributes.get(AttributeID.MAX_MANA);
+		if(maxMana) maxMana.addModifier(new FlatAttributeModifier({
+			attributeID: AttributeID.MAX_MANA,
+			type: ModifierType.BASE,
+			value: function() { return mob.intelligence*2; } // 1 intellience = 2
+		}));
 	}
 
 	set player(player: Player|undefined){
@@ -400,6 +444,39 @@ export class Mob extends Movable{
 
 	get player(): Player|undefined{
 		return this._player;
+	}
+
+	get strength(): number{
+		return this.getAttribute(AttributeID.STRENGTH);
+	}
+
+	get agility(): number{
+		return this.getAttribute(AttributeID.AGILITY);
+	}
+
+	get intelligence(): number{
+		return this.getAttribute(AttributeID.INTELLIGENCE);
+	}
+
+	get maxHealth(): number{
+		return this.getAttribute(AttributeID.MAX_HEALTH);
+	}
+
+	get maxStamina(): number{
+		return this.getAttribute(AttributeID.MAX_STAMINA);
+	}
+
+	get maxMana(): number{
+		return this.getAttribute(AttributeID.MAX_MANA);
+	}
+
+	get toNextLevel(): number{
+		return (this.race?.getAttributeTotalForLevel(AttributeID.TO_NEXT_LEVEL, this.level) || 0) +
+				(this.class?.getAttributeTotalForLevel(AttributeID.TO_NEXT_LEVEL, this.level) || 0)
+	}
+
+	getAttribute(id:AttributeID){
+		return this.attributes.get(id)?.value || 0;
 	}
 
 	ask(question: string, callback: (...args:string[]) => void){
@@ -442,49 +519,6 @@ export class Mob extends Movable{
 		if(this.player) this.player.showRoom();
 	}
 
-/*	private generatePrimaryAttributeModifiers(){
-		let mob = this;
-		for(let attr of this.attributes.entries()){
-			attr[1].addModifier(
-				new FlatAttributeModifier({ // race modifier
-					attributeID: attr[0],
-					type: ModifierType.BASE,
-					value: function() { return mob.race?.getAttributeTotalForLevel(attr[0], mob.level) || 1; }
-				}),
-
-				new FlatAttributeModifier({ // class modifier
-					attributeID: attr[0],
-					type: ModifierType.BASE,
-					value: function() { return mob.class?.getAttributeTotalForLevel(attr[0], mob.level) || 1; }
-				})
-			);
-		}
-	}
-
-	private generateSecondaryAttributeModifiers(){
-		let mob = this;
-		let maxHealth = this.attributes.get(AttributeID.MAX_HEALTH);
-		if(maxHealth) maxHealth.addModifier(new FlatAttributeModifier({
-			attributeID: AttributeID.MAX_HEALTH,
-			type: ModifierType.BASE,
-			value: function() { return mob.strength*2; } // 1 strength = 2 hp
-		}));
-
-		let maxStamina = this.attributes.get(AttributeID.MAX_STAMINA);
-		if(maxStamina) maxStamina.addModifier(new FlatAttributeModifier({
-			attributeID: AttributeID.MAX_STAMINA,
-			type: ModifierType.BASE,
-			value: function() { return mob.agility*2; } // 1 agility = 2 stamina
-		}));
-
-		let maxMana = this.attributes.get(AttributeID.MAX_MANA);
-		if(maxMana) maxMana.addModifier(new FlatAttributeModifier({
-			attributeID: AttributeID.MAX_MANA,
-			type: ModifierType.BASE,
-			value: function() { return mob.intelligence*2; } // 1 intellience = 2
-		}));
-	}
-
 	getRescaleStatsFun(){
 		let mob = this;
 		let health = this.currentHealth / this.maxHealth;
@@ -501,65 +535,45 @@ export class Mob extends Movable{
 		
 	}
 
-	getAttribute(id:AttributeID){
-		return this.attributes.get(id)?.value || 0;
+	step(dir:Direction): boolean{
+		if(!this.canStep(dir)) return false;
+		let room:Room|undefined = this.getStep(dir);
+		if(!room) return false;
+		this.act({
+			selfMessage: `You move towards the ${Direction2Word.get(dir)}.`,
+			roomMessage: `${this.name} moves towards the ${Direction2Word.get(dir)}.`,
+			messageCategory: MessageCategory.MSG_MOVEMENT
+		});
+		let result = this.move(room);
+		this.act({roomMessage: `${this.name} walks in from the ${Direction2Word.get(reverseDirection(dir))}.`, messageCategory: MessageCategory.MSG_MOVEMENT});
+		return result;
 	}
 
-	get strength(): number{
-		return this.getAttribute(AttributeID.STRENGTH);
-	}
-
-	get agility(): number{
-		return this.getAttribute(AttributeID.AGILITY);
-	}
-
-	get intelligence(): number{
-		return this.getAttribute(AttributeID.INTELLIGENCE);
-	}
-
-	get maxHealth(): number{
-		return this.getAttribute(AttributeID.MAX_HEALTH);
-	}
-
-	get maxStamina(): number{
-		return this.getAttribute(AttributeID.MAX_STAMINA);
-	}
-
-	get maxMana(): number{
-		return this.getAttribute(AttributeID.MAX_MANA);
-	}
-
-	get toNextLevel(): number{
-		return (this.race?.getAttributeTotalForLevel(AttributeID.TO_NEXT_LEVEL, this.level) || 0) +
-				(this.class?.getAttributeTotalForLevel(AttributeID.TO_NEXT_LEVEL, this.level) || 0)
-	}*/
-
-	act(options: {selfMessage?: string, target?: Mob, targetMessage?: string, roomMessage?: string}){
-		if(options.selfMessage) this.message(options.selfMessage);
-		if(options.targetMessage) options.target?.message(options.targetMessage);
+	act(options: {selfMessage?: string, target?: Mob, targetMessage?: string, roomMessage?: string, messageCategory?: MessageCategory}){
+		if(options.messageCategory === undefined) options.messageCategory = MessageCategory.MSG_DEFAULT;
+		if(options.selfMessage) this.sendMessage(options.selfMessage, options.messageCategory);
+		if(options.targetMessage) options.target?.sendMessage(options.targetMessage, options.messageCategory);
 		if(options.roomMessage && this.location){
 			for(let object of this.location.contents){
 				if(!(object instanceof Mob)) continue;
 				if(object === this) continue;
 				if(object === options.target) continue;
-				object.message(options.roomMessage);
+				object.sendMessage(options.roomMessage, options.messageCategory);
 			}
 		}
 	}
 
 	hit(target: Mob){
 		if(!this.target) this.engage(target);
-//		let damage = this.strength * 0.66;
-		let damage = 100*0.66;
-//		let defense = target.strength * 0.33;
-		let defense = 100*0.33;
+		let damage = this.strength * 0.66;
+		let defense = target.strength * 0.33;
 		let final = Math.max(Math.floor(damage-defense),0);
-//		console.log(`${target.name} took ${final} damage from ${this.name}. [${target.currentHealth-final}]`);
 		this.act({
 			target: target,
 			selfMessage: `You hit ${target.name} for ${final} damage. [${target.currentHealth-final}]`,
 			targetMessage: `${this.name} hits you for ${final} damage. [${target.currentHealth-final}]`,
-			roomMessage: `${this.name} hits ${target.name} for ${final} damage. [${target.currentHealth-final}]`
+			roomMessage: `${this.name} hits ${target.name} for ${final} damage. [${target.currentHealth-final}]`,
+			messageCategory: MessageCategory.MSG_COMBAT
 		});
 		target.damage(final, this);
 	}
@@ -623,9 +637,9 @@ export class Mob extends Movable{
 	}
 
 	refresh(){
-		this.currentHealth = 100;
-		this.currentStamina = 100;
-		this.currentMana = 100;
+		this.currentHealth = this.maxHealth;
+		this.currentStamina = this.maxStamina;
+		this.currentMana = this.maxMana;
 	}
 
 	die(killer?: Mob){
