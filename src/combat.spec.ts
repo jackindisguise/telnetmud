@@ -15,11 +15,9 @@ let d: dungeon.Dungeon = new dungeon.Dungeon({
 let room1 = d.getRoom({x:0,y:0,z:0});
 let room2 = d.getRoom({x:0,y:0,z:0});
 let attacker: dungeon.Mob = new dungeon.Mob({location:room1});
-attacker.currentHealth = 50;
 attacker.name = "Carl";
 
 let defender: dungeon.Mob = new dungeon.Mob({location:room1});
-defender.currentHealth = 50;
 defender.name = "Mikey";
 
 let attackerDied = false;
@@ -34,7 +32,6 @@ describe("combat", function(){
 	});
 
 	it("Defender dies and combat finishes.", function(done){
-		let defenderDied = false;
 		let odie = defender.die;
 		defender.die = function(killer: dungeon.Mob){
 			defenderDied = true;
