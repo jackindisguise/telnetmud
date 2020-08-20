@@ -1,0 +1,7 @@
+---
+syntax: score
+regex: ^(?:sc|sco|scor|score)$
+fun: |-
+  let msg = `{c${player.mob.name} the ${player.mob.race.display} ${player.mob.class.display}{x`
+  msg += `\r\n{RStr: {r${player.mob.strength}   {GAgi: {g${player.mob.agility}   {CInt: {c${player.mob.intelligence}{x`
+  player.info(msg);
