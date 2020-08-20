@@ -1,6 +1,7 @@
 import { AttributeID } from "./attribute";
 
 export class Classification{
+	display: string = "???";
 	attributeBase?: Map<AttributeID, number>;
 	attributePerLevel?: Map<AttributeID, number>;
 	getAttributeBaseValue(attribute:AttributeID): number{
@@ -27,10 +28,18 @@ export class Race extends Classification{
 	])
 }
 
+export class Human extends Race{
+	display = "human";
+}
+
 export class Class extends Classification{
 	attributePerLevel = new Map<AttributeID, number>([
 		[AttributeID.STRENGTH, 1],
 		[AttributeID.AGILITY, 1],
 		[AttributeID.INTELLIGENCE, 1],
 	])
+}
+
+export class Adventurer extends Class{
+	display = "adventurer";
 }
