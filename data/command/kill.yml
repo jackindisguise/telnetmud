@@ -8,4 +8,9 @@ fun: |-
     return;
   }
 
+  if(player.mob.target){
+    player.message(_("You're already fighting!"));
+    return;
+  }
+
   player.mob.hit(target);
