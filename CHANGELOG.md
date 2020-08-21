@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/jackindisguise/telnetmud/compare/v1.4.0...v1.5.0) (2020-08-21)
+
+
+### Features
+
+* added `damage.ts` package for all things damage. ([e2b7972](https://github.com/jackindisguise/telnetmud/commit/e2b79721db3a3acb209dd478d0b7010304126eb7))
+* added NPC for Mobs with AI, and PC type for player mobs. ([20fd6e5](https://github.com/jackindisguise/telnetmud/commit/20fd6e5c96efcda237d478b589ba18dca3ccc5df))
+* races now provide a basic attack "word" ([fd43be9](https://github.com/jackindisguise/telnetmud/commit/fd43be96a1b415d9a9c8db1b5199d20af3d30634))
+
 ## [1.4.0](https://github.com/jackindisguise/telnetmud/compare/v1.3.0...v1.4.0) (2020-08-20)
 
 
