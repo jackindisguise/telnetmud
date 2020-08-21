@@ -39,5 +39,11 @@
 	"Somehow finished nanny with no character.": "Somehow finished nanny with no character.",
 	"Alas, you cannot go that way.": "Alas, you cannot go that way.",
 	"There's nobody here like that.": "There's nobody here like that.",
-	"You're already fighting!": "You're already fighting!"
+	"You're already fighting!": "You're already fighting!",
+	"Where the fuck are you?": "Where the fuck are you?",
+	"%d/%dhp %d/%dst %d/%dmp{R>{x ": "%d/%dhp %d/%dst %d/%dmp{R>{x ",
+	"%s is here.": "%s is here.",
+	"[{yYou: {R%d%% {c%s: {R$%d%%{x]{R>{x ": "[{yYou: {R%d%% {c%s: {R$%d%%{x]{R>{x ",
+	"[{yYou: {R%d%% {c%s: {R%d%%{x]{R>{x ": "[{yYou: {R%d%% {c%s: {R%d%%{x]{R>{x ",
+	"%d/%dhp %d/%dst %d/%dmp {r[{c%s: {R%d%%{r]{R>{x ": "%d/%dhp %d/%dst %d/%dmp {r[{c%s: {R%d%%{r]{R>{x "
 }

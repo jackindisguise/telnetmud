@@ -1,7 +1,7 @@
 import * as stringx from "./lib/string";
 import { HelpFile } from "./help";
 import { Command } from "./command";
-import { PCData } from "./dungeon";
+import { PCData, SaveFile } from "./dungeon";
 
 // file names
 export const commandFilePath: string = "./data/command/";
@@ -14,7 +14,7 @@ export const worldDungeonFilePath: string = "./data/dungeon/world.yml";
 // data structures
 export const helpfiles: HelpFile[] = [];
 export const commands: Command[] = [];
-export const characters: PCData[] = [];
+export const characters: SaveFile[] = [];
 
 // config files
 export namespace config {
@@ -49,13 +49,13 @@ export function addCommand(..._commands: Command[]){
 }
 
 // character data interface
-export function addCharacterData(...chars: PCData[]){
+export function addSavefile(...chars: SaveFile[]){
 	for(let data of chars){
 		characters.push(data);
 	}
 }
 
-export function getCharacterByName(name: string): PCData|undefined{
+export function getSavefileByName(name: string): SaveFile|undefined{
 	for(let data of characters){
 		if(data.name.toLowerCase() === name.toLowerCase()) return data;
 	}

@@ -5,7 +5,7 @@ import * as database from "./database";
 import * as command from "./command";
 import * as help from "./help";
 import * as mud from "./mud";
-import { Dungeon, DungeonPrototype, Room, PCData } from "./dungeon";
+import { Dungeon, DungeonPrototype, Room, SaveFile } from "./dungeon";
 import { logger } from "./util/logger";
 
 function loadGameFile(done: Function){
@@ -77,10 +77,10 @@ function loadCharacters(done: Function){
 		for(let file of files){
 			let path = database.characterFilePath + file;
 			fs.readFile(path, "utf8", function(err: NodeJS.ErrnoException | null, data: string){
-				let yml: PCData = yaml.parse(data);
+				let yml: SaveFile = yaml.parse(data);
 				if(yml && yml.name && yml.password) {
-					logger.debug(`Loading character '${path}'`);
-					database.addCharacterData(yml);
+					logger.debug(`Loading character savefile '${path}'`);
+					database.addSavefile(yml);
 				}
 
 				c--;

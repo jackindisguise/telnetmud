@@ -724,6 +724,10 @@ export class NPC extends Mob{
 }
 
 export type PCData = {
+	password: string
+}
+
+export type SaveFile = {
 	name: string,
 	password: string,
 	location: CartesianCoordinates
@@ -735,16 +739,16 @@ type CharacterOptions = {
 }
 
 export class PC extends Mob{
-	password: string;
+	pcdata: PCData;
 	constructor(options:CharacterOptions){
 		super(options);
-		this.password = options.password;
+		this.pcdata = {password: options.password};
 	}
 
-	createPCData(): PCData{
+	createSaveFile(): SaveFile{
 		return {
 			name: this.keywords,
-			password: this.password,
+			password: this.pcdata.password,
 			location: {x:this.x||0, y:this.y||0, z:this.z||0}
 		};
 	}

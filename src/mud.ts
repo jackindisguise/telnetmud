@@ -70,11 +70,12 @@ export class MUD{
 	private static nanny(player: Player){
 		let name: string, password: string;
 		let character: dungeon.PC|undefined;
-		let data: dungeon.PCData|undefined;
+		let location: dungeon.Room|undefined = MUD.world.getRoom(0,0,0);
+		let data: dungeon.SaveFile|undefined;
 		function getName(){
 			player.ask(_("What's your name?"), function(response: string){
 				name = response;
-				data = database.getCharacterByName(name);
+				data = database.getSavefileByName(name);
 				if(data) getExistingCharacterPassword();
 				else confirmNewName();
 			});
@@ -98,6 +99,7 @@ export class MUD{
 			// replace this with a generic loading function from database
 			character = new dungeon.PC({password:data.password});
 			character.name = data.name;
+			location = MUD.world.getRoom(data.location);
 			motd();
 		}
 
@@ -143,7 +145,7 @@ export class MUD{
 		function finish(){
 			if(!character) throw new Error(_("Somehow finished nanny with no character."));
 			player.mob = character;
-			character.move(MUD.world.getRoom(0,0,0));
+			character.move(location);
 			player.info(_("Welcome to the world, %s!", character.toString()));
 			player.sendPrompt();
 		};

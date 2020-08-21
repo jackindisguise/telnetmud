@@ -118,13 +118,34 @@ export class Player{
 
 	sendPrompt(){
 		if(this.mob && this.mob.target){
-			let you = Math.ceil(this.mob.currentHealth / this.mob.maxHealth * 100);
 			let them = Math.ceil(this.mob.target.currentHealth / this.mob.target.maxHealth * 100);
-			this.sendMessage(`[{yYou: {R${you}% {c${this.mob.target.name}: {R${them}%{x]{R>{x `, MessageCategory.MSG_PROMPT, false);
+			this.sendMessage(_(
+				"%d/%dhp %d/%dst %d/%dmp {r[{c%s: {R%d%%{r]{R>{x ",
+				this.mob.currentHealth.toString(),
+				this.mob.maxHealth.toString(),
+				this.mob.currentStamina.toString(),
+				this.mob.maxStamina.toString(),
+				this.mob.currentMana.toString(),
+				this.mob.maxMana.toString(),
+				this.mob.target.name,
+				them.toString()
+			), MessageCategory.MSG_PROMPT, false);			return;
+		}
+
+		if(this.mob){
+			this.sendMessage(_(
+				"%d/%dhp %d/%dst %d/%dmp{R>{x ",
+				this.mob.currentHealth.toString(),
+				this.mob.maxHealth.toString(),
+				this.mob.currentStamina.toString(),
+				this.mob.maxStamina.toString(),
+				this.mob.currentMana.toString(),
+				this.mob.maxMana.toString(),
+			), MessageCategory.MSG_PROMPT, false);
 			return;
 		}
 
-		this.sendMessage("{R>{x ", MessageCategory.MSG_PROMPT, false);
+		this.sendMessage(_("{R> "), MessageCategory.MSG_PROMPT, false);
 	}
 
 	showRoom(){
@@ -153,14 +174,14 @@ export class Player{
 		let contents = [];
 		for(let obj of room.contents) {
 			if(obj === this.mob) continue;
-			if(obj instanceof Mob && obj.target === this.mob) contents.push(`${obj.name} is here {Rfighting you{x.`);
-			else contents.push(`${obj.name} is here.`);
+			if(obj instanceof Mob && obj.target === this.mob) contents.push(_("%s is here, {Rfighting you{x."), obj.name);
+			else contents.push(_("%s is here.", obj.name));
 		}
 		if(contents.length) description += "\r\n\r\n" + contents.join("\r\n");
 	
 		// make a map
 		let size = 3;
-		let map = ["-".repeat(size*2+3)];
+		let map = ["-".repeat(size*4+5)];
 		let area = room.dungeon.getArea(room.coordinates, size);
 		for(let y=0;y<size*2+1;y++){
 			let line = ["|"];
@@ -182,16 +203,16 @@ export class Player{
 			}
 
 			line.push("|");
-			map.push(line.join(""));
+			map.push(line.join(" "));
 		}
 	
-		map.push("-".repeat(size*2+3));
+		map.push("-".repeat(size*4+5));
 		let splitDesc = description.split("\r\n");
 		let final = [];
 		for(let i=0;i<Math.max(map.length, splitDesc.length);i++){
 			let left = (i < map.length ? map[i] : "");
 			let right = (i < splitDesc.length ? splitDesc[i] : "");
-			final.push(stringx.pad(left, stringx.PadSide.RIGHT, size*2+3+1)+right);
+			final.push(stringx.pad(left, stringx.PadSide.RIGHT, size*4+5+1)+right);
 		}
 
 		this.info(final.join("\r\n"));
