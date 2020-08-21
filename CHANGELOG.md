@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/jackindisguise/telnetmud/compare/v1.5.0...v1.5.1) (2020-08-21)
+
+
+### Bug Fixes
+
+* fixed combat spec test ([62ef884](https://github.com/jackindisguise/telnetmud/commit/62ef8843fc4aff90ce947faad60640b93fd28c6e))
+
 ## [1.5.0](https://github.com/jackindisguise/telnetmud/compare/v1.4.0...v1.5.0) (2020-08-21)
 
 
