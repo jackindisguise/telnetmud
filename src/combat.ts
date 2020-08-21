@@ -1,4 +1,4 @@
-import { Mob } from "./dungeon";
+import { Mob, PC, NPC } from "./dungeon";
 import * as cron from "node-cron";
 
 export class CombatManager{
@@ -38,7 +38,16 @@ export class CombatManager{
 		let safe: Mob[] = CombatManager.mobs.slice()
 
 		for(let mob of safe){
-			if(mob.target) mob.hit(mob.target);
+			// mob has a target
+			if(mob.target) {
+				// target is invalid for some reason
+				if(!mob.canTarget(mob.target)) {
+					if(mob instanceof NPC) mob.selectMostHatedTarget();
+					else mob.disengage();
+				} else {
+					mob.round();
+				}
+			}
 
 			// don't make this an else
 			// this way it processes after hits too
@@ -50,7 +59,6 @@ export class CombatManager{
 
 		for(let mob of CombatManager.mobs){
 			if(!mob.target) continue;
-			mob.info(`<You: ${Math.ceil(mob.currentHealth / mob.maxHealth * 100)}%> <${mob.target.name}: ${Math.ceil(mob.target.currentHealth / mob.target.maxHealth * 100)}%>`);
 			mob.sendPrompt();
 		}
 
@@ -59,7 +67,8 @@ export class CombatManager{
 
 	static die(deceased: Mob){
 		for(let mob of CombatManager.mobs){
-			mob.removeHateTarget(deceased);
+			if(mob instanceof NPC) mob.removeHateTarget(deceased);
+			else if(mob.target === deceased) mob.disengage();
 		}
 	}
 

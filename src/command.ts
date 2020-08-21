@@ -33,7 +33,8 @@ export const safeEnvironment = {
 	Room: dungeon.Room,
 	DObject: dungeon.DObject,
 	Mob: dungeon.Mob,
-	Character: dungeon.Character,
+	NPC: dungeon.NPC,
+	PC: dungeon.PC,
 };
 
 export class Handler{

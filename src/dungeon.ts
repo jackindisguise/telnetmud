@@ -1,9 +1,11 @@
-import { Direction, Directions, Direction2Word, reverseDirection } from "./direction";
 import * as color from "./color";
+import { Direction, Directions, Direction2Word, reverseDirection } from "./direction";
 import { Player, MessageCategory } from "./player";
 import { CombatManager } from "./combat";
 import { Attribute, AttributeID, FlatAttributeModifier, ModifierType } from "./attribute";
 import { Race, Class, Human, Adventurer } from "./classification";
+import { DamageWord, DamageWords, DAMAGE_CLASS, DAMAGE_TYPE } from "./damage";
+import { inflateRaw } from "zlib";
 
 export type Dimensions = {
 	width: number,
@@ -364,6 +366,26 @@ export class Movable extends DObject{
 	}
 }
 
+export type DamageOptions = {
+	amount: number;
+	source?: Mob;
+}
+
+export type MitigateDamageOptions = {
+	amount: number;
+	source?: Mob;
+	damageType: DAMAGE_TYPE;
+	damageClass: DAMAGE_CLASS;
+}
+
+export type HitOptions = {
+	amount: number;
+	target: Mob;
+	word: DamageWord;
+//	ability?: Ability;
+	weapon?: Weapon;
+}
+
 export class Mob extends Movable{
 	race?: Race = new Human();
 	class?: Class = new Adventurer();
@@ -382,7 +404,6 @@ export class Mob extends Movable{
 		[AttributeID.MAX_STAMINA, new Attribute()],
 		[AttributeID.MAX_MANA, new Attribute()]
 	]);
-	hated: Map<Mob, number> = new Map<Mob, number>(); // hate tracker for AI
 	target?: Mob; // mob we're currently in combat with
 
 	constructor(options?:DObjectOptions){
@@ -479,6 +500,18 @@ export class Mob extends Movable{
 		return this.attributes.get(id)?.value || 0;
 	}
 
+	getRescaleStats(){
+		let mob = this;
+		let health = this.currentHealth / this.maxHealth;
+		let stamina = this.currentStamina / this.maxStamina;
+		let mana = this.currentMana / this.maxMana;
+		return function(){
+			mob.currentHealth = Math.max(health * mob.maxHealth, 1);
+			mob.currentStamina = Math.max(stamina * mob.maxStamina, 1);
+			mob.currentMana = Math.max(mana * mob.maxMana, 1);
+		};
+	}
+
 	ask(question: string, callback: (...args:string[]) => void){
 		if(this.player) this.player.ask(question, callback);
 	}
@@ -519,22 +552,6 @@ export class Mob extends Movable{
 		if(this.player) this.player.showRoom();
 	}
 
-	getRescaleStatsFun(){
-		let mob = this;
-		let health = this.currentHealth / this.maxHealth;
-		let stamina = this.currentStamina / this.maxStamina;
-		let mana = this.currentMana / this.maxMana;
-		return function(){
-			mob.currentHealth = Math.max(health * mob.maxHealth, 1);
-			mob.currentStamina = Math.max(stamina * mob.maxStamina, 1);
-			mob.currentMana = Math.max(mana * mob.maxMana, 1);
-		};
-	}
-
-	gainExperience(amount: number){
-		
-	}
-
 	step(dir:Direction): boolean{
 		if(!this.canStep(dir)) return false;
 		let room:Room|undefined = this.getStep(dir);
@@ -562,27 +579,100 @@ export class Mob extends Movable{
 		}
 	}
 
+	round(){
+		if(!this.target) return;
+		this.hit(this.target);
+	}
+
 	hit(target: Mob){
+		// if we aren't fighting this mob, start fighting them
 		if(!this.target) this.engage(target);
-		let damage = this.strength * 0.66;
-		let defense = target.strength * 0.33;
-		let final = Math.max(Math.floor(damage-defense),0);
+
+		let damage = 0;
+		let word = this.race?.baseDamageWord || DamageWords.PUNCH;
+
+		// base class damage determined by different stats
+		if(word.class === DAMAGE_CLASS.PHYSICAL) damage = this.strength * 0.66;
+		else if(word.class === DAMAGE_CLASS.MAGICAL) damage = this.intelligence * 0.66;
+
+		// get damage mitigation for this damage from the target
+		let mitigation = target.mitigateDamage({amount: damage, source: this, damageType: word.type, damageClass: word.class});
+		let final = Math.max(Math.floor(damage-mitigation),0);
+
+		// announce hit
+		this.hitMessage({amount:final, target:target, word: word});
+
+		// take damage
+		target.damage({amount:final, source:this});
+	}
+
+	hitMessage(options: HitOptions){
+		if(options.weapon) {
+			return;
+		}
+
+		// convenience
+		let percent = options.amount / options.target.maxHealth * 100;
+
+		// show message
 		this.act({
-			target: target,
-			selfMessage: `You hit {y${target.name}{x for {R${final}{x damage. [{R-${(final/target.maxHealth*100).toFixed(2)}%{x]`,
-			targetMessage: `{c${this.name}{x hits you for {R${final}{x damage. [{R-${(final/target.maxHealth*100).toFixed(2)}%{x]`,
-			roomMessage: `{c${this.name}{x hits {y${target.name}{x for {R${final}{x damage. [{R-${(final/target.maxHealth*100).toFixed(2)}%{x]`,
+			target: options.target,
+			selfMessage: `You ${options.word.singular} {y${options.target.name}{x for {R${options.amount}{x damage. [{R-${percent.toFixed(2)}%{x]`,
+			targetMessage: `{c${this.name}{x ${options.word.plural} you for {R${options.amount}{x damage. [{R-${percent.toFixed(2)}%{x]`,
+			roomMessage: `{c${this.name}{x ${options.word.plural} {y${options.target.name}{x for {R${options.amount}{x damage. [{R-${percent.toFixed(2)}%{x]`,
 			messageCategory: MessageCategory.MSG_COMBAT
 		});
-		target.damage(final, this);
 	}
 
-	damage(amount: number, source?: Mob){
-		this.currentHealth -= amount;
-		if(source) this.addHate(source, amount);
-		if(this.currentHealth < 1) this.die(source);
+	damage(options: DamageOptions){
+		this.currentHealth -= options.amount;
+		if(!this.target && options.source) this.engage(options.source);
+		if(this.currentHealth < 1) this.die(options.source);
 	}
 
+	mitigateDamage(options: MitigateDamageOptions): number{
+		let mitigation = 0;
+		if(options.damageClass === DAMAGE_CLASS.MAGICAL) mitigation = this.intelligence * 0.5;
+		else if(options.damageClass === DAMAGE_CLASS.PHYSICAL) mitigation = this.strength * 0.5;
+		return mitigation;
+	}
+
+	canTarget(mob: Mob): boolean{
+		if(mob.location !== this.location) return false;
+		return true;
+	}
+
+	engage(target: Mob){
+		if(this.target === target) return;
+		this.target = target;
+		CombatManager.add(this);
+	}
+
+	disengage(){
+		this.target = undefined;
+	}
+
+	refresh(){
+		this.currentHealth = this.maxHealth;
+		this.currentStamina = this.maxStamina;
+		this.currentMana = this.maxMana;
+	}
+
+	die(killer?: Mob){
+		this.act({
+			selfMessage: `You fall to the floor, DEAD.`,
+			roomMessage: `${this.name} falls to the floor, DEAD.`
+		});
+
+		this.disengage(); // stop targeting
+		CombatManager.die(this); // stop fighting
+		if(this.player) this.refresh(); // if we're a player, heal us
+		else this.location = undefined; // if we're an NPC, cast us into the void
+	}
+}
+
+export class NPC extends Mob{
+	hated: Map<Mob, number> = new Map<Mob, number>(); // hate tracker for AI
 	addHate(target: Mob, amount: number){
 		let value: number|undefined = this.hated.get(target);
 		this.hated.set(target, (value?value:0)+amount);
@@ -593,11 +683,6 @@ export class Mob extends Movable{
 		if(!this.hated.has(mob)) return;
 		this.hated.delete(mob);
 		this.selectMostHatedTarget();
-	}
-
-	canTarget(mob: Mob): boolean{
-		if(mob.location !== this.location) return false;
-		return true;
 	}
 
 	selectMostHatedTarget(){
@@ -623,36 +708,22 @@ export class Mob extends Movable{
 	}
 
 	engage(target: Mob){
-		this.target = target;
+		super.engage(target);
 		this.addHate(target, 0);
-		CombatManager.add(this);
-		CombatManager.add(target);
 	}
 
 	disengage(){
-		this.target = undefined;
+		super.disengage();
 		this.hated = new Map<Mob, number>();
-		if(!(this instanceof Character)) this.refresh(); // NPCs heal when disengaging
 	}
 
-	refresh(){
-		this.currentHealth = this.maxHealth;
-		this.currentStamina = this.maxStamina;
-		this.currentMana = this.maxMana;
-	}
-
-	die(killer?: Mob){
-		this.act({
-			selfMessage: `You fall to the floor, DEAD.`,
-			roomMessage: `${this.name} falls to the floor, DEAD.`
-		});
-		this.disengage();
-		CombatManager.die(this);
-		this.refresh();
+	damage(options: DamageOptions){
+		if(options.source) this.addHate(options.source, options.amount);
+		super.damage(options);
 	}
 }
 
-export type CharacterData = {
+export type PCData = {
 	name: string,
 	password: string,
 	location: CartesianCoordinates
@@ -663,14 +734,14 @@ type CharacterOptions = {
 	location?: DObject|Room
 }
 
-export class Character extends Mob{
+export class PC extends Mob{
 	password: string;
 	constructor(options:CharacterOptions){
 		super(options);
 		this.password = options.password;
 	}
 
-	createCharacterData(): CharacterData{
+	createPCData(): PCData{
 		return {
 			name: this.keywords,
 			password: this.password,

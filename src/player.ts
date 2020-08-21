@@ -27,6 +27,13 @@ export class Player{
 		client.on("command", function(line: string){
 			player.command(line.trim());
 		});
+
+		client.on("disconnect", function(reason: string){
+			if(player.mob) {
+				player.mob.location = undefined;
+				player.mob = undefined;
+			}
+		});
 	}
 
 	set mob(mob: Mob|undefined){
@@ -110,6 +117,13 @@ export class Player{
 	}
 
 	sendPrompt(){
+		if(this.mob && this.mob.target){
+			let you = Math.ceil(this.mob.currentHealth / this.mob.maxHealth * 100);
+			let them = Math.ceil(this.mob.target.currentHealth / this.mob.target.maxHealth * 100);
+			this.sendMessage(`[{yYou: {R${you}% {c${this.mob.target.name}: {R${them}%{x]{R>{x `, MessageCategory.MSG_PROMPT, false);
+			return;
+		}
+
 		this.sendMessage("{R>{x ", MessageCategory.MSG_PROMPT, false);
 	}
 
@@ -137,7 +151,11 @@ export class Player{
 
 		// stuff in room
 		let contents = [];
-		for(let obj of room.contents) if(obj !== this.mob) contents.push(`${obj.name} is here.`);
+		for(let obj of room.contents) {
+			if(obj === this.mob) continue;
+			if(obj instanceof Mob && obj.target === this.mob) contents.push(`${obj.name} is here {Rfighting you{x.`);
+			else contents.push(`${obj.name} is here.`);
+		}
 		if(contents.length) description += "\r\n\r\n" + contents.join("\r\n");
 	
 		// make a map

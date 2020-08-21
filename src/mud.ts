@@ -7,6 +7,7 @@ import { logger } from "./util/logger";
 import { Player, MessageCategory } from "./player";
 import { HelpFile } from "./help";
 import { _ } from "../i18n";
+import { Psion } from "./classification";
 
 const passwordSecret = "kickEEwinTI";
 
@@ -68,8 +69,8 @@ export class MUD{
 
 	private static nanny(player: Player){
 		let name: string, password: string;
-		let character: dungeon.Character|undefined;
-		let data: dungeon.CharacterData|undefined;
+		let character: dungeon.PC|undefined;
+		let data: dungeon.PCData|undefined;
 		function getName(){
 			player.ask(_("What's your name?"), function(response: string){
 				name = response;
@@ -95,7 +96,7 @@ export class MUD{
 		function loadCharacter(){
 			if(!data) return getName();
 			// replace this with a generic loading function from database
-			character = new dungeon.Character({password:data.password});
+			character = new dungeon.PC({password:data.password});
 			character.name = data.name;
 			motd();
 		}
@@ -127,7 +128,8 @@ export class MUD{
 		}
 
 		function createNewCharacter(){
-			character = new dungeon.Character({password:passwordHash(password)});
+			character = new dungeon.PC({password:passwordHash(password)});
+			character.race = new Psion;
 			character.name = name;
 			motd();
 		}
