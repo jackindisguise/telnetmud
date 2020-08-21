@@ -1,4 +1,5 @@
 import { AttributeID } from "./attribute";
+import { DamageWord, DamageWords } from "./damage";
 
 export class Classification{
 	display: string = "???";
@@ -20,6 +21,7 @@ export class Classification{
 }
 
 export class Race extends Classification{
+	baseDamageWord = DamageWords.PUNCH;
 	attributeBase = new Map<AttributeID, number>([
 		[AttributeID.STRENGTH, 10],
 		[AttributeID.AGILITY, 10],
@@ -30,6 +32,17 @@ export class Race extends Classification{
 
 export class Human extends Race{
 	display = "human";
+}
+
+export class Psion extends Race{
+	display = "psion";
+	baseDamageWord = DamageWords.MIND_FLAY;
+	attributeBase = new Map<AttributeID, number>([
+		[AttributeID.STRENGTH, 8],
+		[AttributeID.AGILITY, 10],
+		[AttributeID.INTELLIGENCE, 18],
+		[AttributeID.TO_NEXT_LEVEL, 100]
+	])
 }
 
 export class Class extends Classification{
