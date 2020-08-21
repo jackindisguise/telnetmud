@@ -2,6 +2,9 @@
 syntax: spawn
 regex: ^(?:sp|spa|spaw|spawn)$
 fun: |-
-  let m = new Mob({location:player.mob.location});
+  let m = new NPC({location:player.mob.location});
   m.name = "Neo";
-  console.log(m);
+  m.level = 3;
+  m.refresh();
+  m = new NPC({location:player.mob.location});
+  m.name = "Geo";

@@ -1,0 +1,9 @@
+---
+syntax: kill <target>
+regex: ^kill all$
+fun: |-
+  for(let obj of player.mob.location.contents.concat()){
+    if(!(obj instanceof Mob)) continue;
+    if(obj === player.mob) continue;
+    player.mob.hit(obj);
+  }
