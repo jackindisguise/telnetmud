@@ -9,6 +9,7 @@ export class CombatManager{
 		for(let mob of mobs){
 			if(CombatManager.mobs.indexOf(mob) === -1)
 			CombatManager.mobs.push(mob);
+			mob.info("*DEBUG* You enter combat.");
 		}
 
 		if(CombatManager.mobs.length > 0) CombatManager.start();
@@ -18,6 +19,7 @@ export class CombatManager{
 		for(let mob of mobs){
 			let pos: number = CombatManager.mobs.indexOf(mob);
 			if(pos !== -1) CombatManager.mobs.splice(pos, 1);
+			mob.info("*DEBUG* You leave combat.");
 		}
 	}
 
@@ -70,6 +72,8 @@ export class CombatManager{
 			if(mob instanceof NPC) mob.removeHateTarget(deceased);
 			else if(mob.target === deceased) mob.disengage();
 		}
+
+		CombatManager.remove(deceased);
 	}
 
 	static stop(){
