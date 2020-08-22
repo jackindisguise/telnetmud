@@ -7,5 +7,5 @@ fun: |-
     return;
   }
 
-  player.message(JSON.stringify(player.mob.createCharacterData()));
-  console.log(player.mob.createCharacterData());
+  player.message(JSON.stringify(player.mob.createSaveFile()));
+  console.log(player.mob.createSaveFile());
