@@ -3,6 +3,11 @@ export enum DAMAGE_CLASS {
 	MAGICAL
 }
 
+export const DamageClassNames = new Map<DAMAGE_CLASS, string>([
+	[DAMAGE_CLASS.PHYSICAL, "physical"],
+	[DAMAGE_CLASS.MAGICAL, "magical"]
+]);
+
 export enum DAMAGE_TYPE {
 	PIERCE,
 	SLASH,
@@ -13,6 +18,17 @@ export enum DAMAGE_TYPE {
 	ELECTRIFY,
 	VORPAL
 }
+
+export const DamageTypeNames = new Map<DAMAGE_TYPE, string>([
+	[DAMAGE_TYPE.PIERCE, "pierce"],
+	[DAMAGE_TYPE.SLASH, "slash"],
+	[DAMAGE_TYPE.BASH, "bash"],
+	[DAMAGE_TYPE.MAGICAL, "magical"],
+	[DAMAGE_TYPE.FLAME, "flame"],
+	[DAMAGE_TYPE.FROST, "frost"],
+	[DAMAGE_TYPE.ELECTRIFY, "electrify"],
+	[DAMAGE_TYPE.VORPAL, "vorpal"],
+]);
 
 export type DamageWord = {
 	class: DAMAGE_CLASS,
