@@ -2,6 +2,45 @@
 syntax: score
 regex: ^(?:sc|sco|scor|score)$
 fun: |-
-  let msg = `{c${player.mob.name} the ${player.mob.race.display} ${player.mob.class.display}{x`
-  msg += `\r\n{RStr: {r${player.mob.strength}   {GAgi: {g${player.mob.agility}   {CInt: {c${player.mob.intelligence}{x`
-  player.info(msg);
+  let options = {
+    header: "Scoreboard",
+    headerOrientation: stringx.PadSide.CENTER,
+    padding: 2,
+    size:80,
+    style: stringx.BoxStyle.CLEAN
+  };
+
+  let content = [];
+  content.push({
+    text: _("%s the %s %s.", player.mob.name, player.mob.race.display, player.mob.class.display),
+    clamp: false,
+    orientation: stringx.PadSide.CENTER
+  });
+
+  content.push({
+    text: _("Status") + "\n" +
+          _("Health:   %d / %d", player.mob.currentHealth, player.mob.maxHealth) +
+          _("      Stamina:  %d / %d", player.mob.currentHealth, player.mob.maxHealth) +
+          _("      Mana:     %d / %d", player.mob.currentHealth, player.mob.maxHealth),
+    clamp: false,
+    orientation: stringx.PadSide.CENTER
+  });
+
+  content.push({
+    text: _("Attributes") + "\n" +
+          _("Strength:     %s", stringx.pad(player.mob.strength.toString(), stringx.PadSide.LEFT, 3)) +
+          _("      Attack Power: %s", stringx.pad(player.mob.strength.toString(), stringx.PadSide.LEFT, 3)) +
+          _("      Defense:      %s", stringx.pad(player.mob.strength.toString(), stringx.PadSide.LEFT, 3)) + "\n" +
+          _("Agility:      %s", stringx.pad(player.mob.agility.toString(), stringx.PadSide.LEFT, 3)) +
+          _("      Speed:        %s", stringx.pad(player.mob.agility.toString(), stringx.PadSide.LEFT, 3)) +
+          _("      Evasion:      %s", stringx.pad(player.mob.agility.toString(), stringx.PadSide.LEFT, 3)) + "\n" +
+          _("Intelligence: %s", stringx.pad(player.mob.intelligence.toString(), stringx.PadSide.LEFT, 3)) +
+          _("      Magic Power:  %s", stringx.pad(player.mob.intelligence.toString(), stringx.PadSide.LEFT, 3)) +
+          _("      Resilience:   %s", stringx.pad(player.mob.intelligence.toString(), stringx.PadSide.LEFT, 3)),
+    clamp: false,
+    orientation: stringx.PadSide.CENTER
+  });
+
+  options.content = content;
+
+  player.info(stringx.box(options));
