@@ -2,8 +2,8 @@
 syntax: save
 regex: ^(?:s|sa|sav|save)$
 fun: |-
-  if(!(player.mob instanceof Character)){
-    player.message("You're not even a character.");
+  if(player.mob instanceof NPC){
+    player.message(_("You're not even a person."));
     return;
   }
 

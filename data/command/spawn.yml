@@ -8,3 +8,4 @@ fun: |-
   m.refresh();
   m = new NPC({location:player.mob.location});
   m.name = "Geo";
+  player.message(_("Spawned 2 mobbies."));
