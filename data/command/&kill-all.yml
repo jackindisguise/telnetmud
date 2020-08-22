@@ -2,8 +2,14 @@
 syntax: kill <target>
 regex: ^kill all$
 fun: |-
+  let found = false;
   for(let obj of player.mob.location.contents.concat()){
     if(!(obj instanceof Mob)) continue;
     if(obj === player.mob) continue;
     player.mob.hit(obj);
+    found = true;
+  }
+
+  if(!found) {
+    player.message(_("There's nobody here to kill."));
   }
