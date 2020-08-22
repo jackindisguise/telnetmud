@@ -387,11 +387,12 @@ export type HitOptions = {
 }
 
 export class Mob extends Movable{
-	race?: Race = new Human();
-	class?: Class = new Adventurer();
+	private _race: Race = new Human();
+	private _class: Class = new Adventurer();
 	level: number = 1;
 	currentExperience: number = 0;
 	private _player?: Player;
+	target?: Mob; // mob we're currently in combat with
 	mapText: string = "!";
 	currentHealth: number = 100;
 	currentStamina: number = 100;
@@ -404,7 +405,26 @@ export class Mob extends Movable{
 		[AttributeID.MAX_STAMINA, new Attribute()],
 		[AttributeID.MAX_MANA, new Attribute()]
 	]);
-	target?: Mob; // mob we're currently in combat with
+
+	get race(): Race{
+		return this._race;
+	}
+
+	set race(race: Race){
+		let rescale = this.rescaleStatsFun();
+		this._race = race;
+		rescale();
+	}
+
+	get class(): Class{
+		return this._class;
+	}
+
+	set class(_class: Class){
+		let rescale = this.rescaleStatsFun();
+		this._class = _class;
+		rescale();
+	}
 
 	constructor(options?:DObjectOptions){
 		super(options);
@@ -500,7 +520,7 @@ export class Mob extends Movable{
 		return this.attributes.get(id)?.value || 0;
 	}
 
-	getRescaleStats(){
+	rescaleStatsFun(){
 		let mob = this;
 		let health = this.currentHealth / this.maxHealth;
 		let stamina = this.currentStamina / this.maxStamina;
