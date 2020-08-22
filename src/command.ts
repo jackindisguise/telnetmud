@@ -24,6 +24,7 @@ export const safeEnvironment = {
 	// modules
 	dungeon: dungeon,
 	direction: direction,
+	stringx: stringx,
 	_: _,
 
 	// data structures
