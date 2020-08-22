@@ -173,7 +173,7 @@ export function clamp(str: string, size: number): string{
 
 // padder functions
 export function pad(str: string, side: PadSide, size: number, padder?: string): string {
-	if(!padder) padder = " "; // default to a space
+	if(padder === undefined) padder = " "; // default to a space
 	let strnocolor = color.strip(str);
 	if(strnocolor.length > size) return str;
 	let paddernocolor = color.strip(padder);
