@@ -131,7 +131,7 @@ export class MUD{
 
 		function createNewCharacter(){
 			character = new dungeon.PC({password:passwordHash(password)});
-			character.race = new Psion;
+			character.race = new Psion();
 			character.name = name;
 			motd();
 		}
