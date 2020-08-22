@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/jackindisguise/telnetmud/compare/v1.5.1...v1.6.0) (2020-08-22)
+
+
+### Features
+
+* added name map for damage classes and damage types ([d3b430d](https://github.com/jackindisguise/telnetmud/commit/d3b430d3b846eb0b2cc120ba0c054a19295e216c))
+* added score command ([90153f9](https://github.com/jackindisguise/telnetmud/commit/90153f9500733da0ddb14b5dc50c8787e5437884))
+* commands now have access to `lib/string.ts` library (named `stringx`). ([b7c7bec](https://github.com/jackindisguise/telnetmud/commit/b7c7bec9c1f9ec25b31b5a849c83460b10dbce00))
+
+
+### Bug Fixes
+
+* CombatManager.die now removes the deceased mob from the combat rotation. ([99a4142](https://github.com/jackindisguise/telnetmud/commit/99a4142e8114213985a952243cbcc7751bf04244))
+* fixed the old reference to CharacterData ([ad9ff58](https://github.com/jackindisguise/telnetmud/commit/ad9ff580f7d09aa21a5205f8f3f4fe56c4aba48a))
+
 ### [1.5.1](https://github.com/jackindisguise/telnetmud/compare/v1.5.0...v1.5.1) (2020-08-21)
 
 
